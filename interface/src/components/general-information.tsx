@@ -12,7 +12,6 @@ export default function GeneralInformation() {
 
 	return (
 		<>
-
 			<h1>General Information</h1>
 			<Grid align="flex-end" >
 				<GridCol span={6}>
@@ -48,7 +47,6 @@ export default function GeneralInformation() {
 					/>
 				</GridCol>
 			</Grid>
-
 		</>
 	)
 }

@@ -119,7 +119,9 @@ export function parseJson() {
 		cellLifeDays,
 		carryingCapacity,
 		mutationRate,
-		mutableBases
+		mutableBases,
+		endingTime,
+		savingCheckpoints
 	} = useGeneralInformationStore.getState();
 
 	const {
@@ -144,6 +146,8 @@ export function parseJson() {
 		carryingCapacity,
 		mutationRate,
 		mutableBases,
+		endingTime,
+		savingCheckpoints,
 		functionalEvents,
 		populations: {
 			genotype,

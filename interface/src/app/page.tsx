@@ -1,4 +1,5 @@
 'use client'
+import AdvancedInformation from "@/components/advanced-information";
 import FunctionalEvents from "@/components/functional-events";
 import GeneralInformation from "@/components/general-information";
 import { parseJson } from "@/lib/parse-json";
@@ -24,6 +25,7 @@ export default function Home() {
 		<>
 			<Container mb={50}>
 				<GeneralInformation />
+				<AdvancedInformation />
 				<Divider my="md" />
 				<FunctionalEvents />
 				<Divider my="md" />
