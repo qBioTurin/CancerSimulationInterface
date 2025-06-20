@@ -1,9 +1,10 @@
 import { Grid, GridCol, NumberInput, Text, Stack, NativeSelect, Fieldset, Badge, ActionIcon } from "@mantine/core";
-import { colorsAddButton, colorsAddButtonIcon, colorsPills } from "./colors";
+import { colors, colorsAddButton, colorsAddButtonIcon, colorsPills } from "./colors";
 import { Event } from "./interfaces";
 import { IconPlus } from "@tabler/icons-react";
 import PopulationCombobox from "./population-combobox";
 import { useStartingConditionsStore } from "@/lib/starting-conditions-store";
+import { useFunctionalEventsStore } from "@/lib/functional-events-store";
 
 export default function StartingConditions({ functionalEvents }: { functionalEvents: Event[] }) {
 	const {
@@ -16,15 +17,16 @@ export default function StartingConditions({ functionalEvents }: { functionalEve
 		nextPopulationId,
 		populations,
 		nextMutationId,
-		mutations,
-		setStartingNumberOfCells,
-		startingNumberOfCells
+		mutations
 	} = useStartingConditionsStore();
+
+	function getEventTypeById(id: number, events: Event[]) {
+		return events.filter(e => e.id === id)[0].type
+	}
 
 	return (
 		<>
 			<h1>Starting Conditions</h1>
-			<NumberInput label="Starting number of cells" onChange={(val) => setStartingNumberOfCells(Number(val))} defaultValue={startingNumberOfCells} hideControls w={"40%"} />
 			<Grid mt={40}>
 				<GridCol span={7}>
 					<Fieldset legend="Starting Populations">
@@ -60,7 +62,7 @@ export default function StartingConditions({ functionalEvents }: { functionalEve
 								return (
 									<Grid key={index} align="flex-end">
 										<GridCol span={4}>
-											<Badge color={colorsPills} autoContrast size="lg">{mutation.name}</Badge>
+											<Badge color={colors[getEventTypeById(mutation.event, functionalEvents)]} autoContrast size="lg">{mutation.name}</Badge>
 										</GridCol>
 										<GridCol span={8}>
 											<NativeSelect onChange={(e) => updateMutations(mutation, Number(e.currentTarget.value))} data={functionalEvents.map(event => ({ label: event.name, value: String(event.id) }))} />

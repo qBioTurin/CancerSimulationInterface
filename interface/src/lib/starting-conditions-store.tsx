@@ -3,15 +3,11 @@ import { Mutation, Population } from "@/components/interfaces";
 import { create } from "zustand";
 
 interface StartingConditions {
-	startingNumberOfCells: number;
-
 	mutations: Mutation[];
 	nextMutationId: number;
 
 	populations: Population[];
 	nextPopulationId: number;
-
-	setStartingNumberOfCells: (newStartingNumberOfCells: number) => void;
 
 	addMutations: (mut: Mutation) => void;
 	updateMutations: (mut: Mutation, event: number) => void;
@@ -32,8 +28,6 @@ export const useStartingConditionsStore = create<StartingConditions>((set) => ({
 
 	populations: [{ id: 1, name: "Pop1", mutations: ["Mut1"], numberOfCells: 1 }],
 	nextPopulationId: 2,
-
-	setStartingNumberOfCells: (newStartingNumberOfCells) => set({ startingNumberOfCells: newStartingNumberOfCells }),
 
 	addMutations: (mut) =>
 		set((state) => ({
