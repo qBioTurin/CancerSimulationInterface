@@ -1,25 +1,19 @@
-source("/app/scripts/libraries.R")
-source("/app/scripts/Utils.R")
-source("/app/scripts/Population.R")
-source("/app/scripts/Local_Params.R")
-source("/app/scripts/Population_with_size_nmut.R")
+source("scripts/libraries.R")
+source("scripts/Utils.R")
+source("scripts/Population.R")
+source("scripts/Local_Params.R")
+source("scripts/Population_with_size_nmut.R")
 
-load("/data/Parameters.RData")
-path<-"/data"
-Nexp<-1
+args<-commandArgs(trailingOnly = TRUE)
+if(interactive()){
+  args <- c("raw","output")
+}
+path_in<-args[1]
+path_out<-args[2]
 
-filenames <- list.files(paste(path,"/sim",Nexp,sep=""), full.names = FALSE)
+load(paste(path_in,"/obs_tumor.RData",sep=""))
+load(paste(path_in,"/Parameters.RData",sep=""))
 
-tumor<-lapply(filenames,function(filename){
-  load(paste(path,"/sim",Nexp,"/",filename,sep=""))
-  name<-stringr::str_replace(filename,"Zprovv","")
-  name<-stringr::str_replace(name,".RData","")
-  setNames(object = list(Zprovv), name)
-})
-tumor<-unlist(tumor,recursive = FALSE)
-tumor<-tumor[order(as.numeric(names(tumor)))]
-
-obs_tumor<-get_obs_tumor(parameters,tumor,10^(-3))
 plot<-get_my_muller_plot(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                          obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
                          functional_effects = parameters@functional_effects,
@@ -27,5 +21,6 @@ plot<-get_my_muller_plot(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                          palette = c(1))
 
 ggsave(plot,device = "png",
-       path = "/data/",width = 9,height = 5,
-       filename="plot.png",)
+       path = path_out,
+       width = 9,height = 5,
+       filename="plot.png")

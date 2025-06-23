@@ -1,2 +1,12 @@
-.DS_Store
+*.DS_Store
 data/
+*.Rproj.user
+*.Rhistory
+*.RData
+*.Ruserdata
+*.DS_Store
+*.Rproj.user
+*.Rproj
+app/params.json
+app/raw
+App/output

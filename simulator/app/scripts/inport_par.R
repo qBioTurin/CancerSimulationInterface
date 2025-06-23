@@ -1,10 +1,13 @@
-source("/app/scripts/install_libraries.R")
-source("/app/scripts/libraries.R")
-source("/app/scripts/Utils.R")
+source("scripts/libraries.R")
+source("scripts/Utils.R")
 
-# args<-commandArgs(trailingOnly = TRUE)
-# json_data <- fromJSON(file=args(1))
-json_data <- fromJSON(file="/data/params.json")
+
+args<-commandArgs(trailingOnly = TRUE)
+if(interactive()){
+  args <- c("params.json","raw")
+}
+json_data <- fromJSON(file=args[1])
+path<-args[2]
 
 length_panel<-json_data$mutableBases
 K_base<-json_data$carryingCapacity
@@ -119,7 +122,7 @@ save(list=c("parameters",
             "starting_fun_eff",
             "Ncells_start",
             "tmax"),
-     file = "/data/Parameters.RData"
+     file = paste(path,"/Parameters.RData",sep="")
      )
 rm(list=ls())
 
