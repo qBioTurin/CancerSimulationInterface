@@ -677,16 +677,16 @@ setMethod("get_my_muller_plot",
                                   color=fun_eff,
                                   fill=fun_eff))+
                   #scale_fill_manual(values=palette)+
-                  geom_segment(aes(x=max(Clones_df$time)*(1+1/20),
-                                   xend = max(Clones_df$time)*(1+1/20),
-                                   y=min(Clones_df$y_lower),
-                                   yend=max(Clones_df$y_upper)
-                  ),arrow = arrow(ends="both",length = unit(5, "points")))+
-                  geom_label(aes(x=max(Clones_df$time)*(1+1/20),
-                                 y=(min(Clones_df$y_lower)+max(Clones_df$y_upper))/2),
-                             label = TeX(latex_label_k),
-                             size=3,
-                             label.size = NA)+
+                  # geom_segment(aes(x=max(Clones_df$time)*(1+1/20),
+                  #                  xend = max(Clones_df$time)*(1+1/20),
+                  #                  y=min(Clones_df$y_lower),
+                  #                  yend=max(Clones_df$y_upper)
+                  # ),arrow = arrow(ends="both",length = unit(5, "points")))+
+                  # geom_label(aes(x=max(Clones_df$time)*(1+1/20),
+                  #                y=(min(Clones_df$y_lower)+max(Clones_df$y_upper))/2),
+                  #            label = TeX(latex_label_k),
+                  #            size=3,
+                  #            label.size = NA)+
                   #scale_color_manual(values=palette_dark,guide = "none")+
                   xlab("Time")+
                   ylab("Absolute Aboundance")+
@@ -694,13 +694,13 @@ setMethod("get_my_muller_plot",
                   #guides(fill=guide_legend(title="Functional effect:",override.aes = list(color = palette_dark)))+
                   theme_void()+
                   theme(
-                    axis.title.x = element_text(size=14),
-                    axis.title.y = element_text(size=14,angle=90,vjust=2),
-                    axis.text.y = element_blank(),
-                    plot.margin = unit(c(0,0,0,0.2), "cm"),
-                    axis.text.x = element_text(size=12,vjust = 3),
-                    legend.position ="bottom",
-                    legend.box = "vertical"
+                    #axis.title.x = element_text(size=14),
+                    #axis.title.y = element_text(size=14,angle=90,vjust=2),
+                    #axis.text.y = element_blank(),
+                    #plot.margin = unit(c(0,0,0,0.2), "cm"),
+                    #axis.text.x = element_text(size=12,vjust = 3),
+                    legend.position ="none",
+                    #legend.box = "vertical"
                   )
                 
                 

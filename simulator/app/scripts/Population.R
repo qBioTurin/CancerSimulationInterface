@@ -70,6 +70,26 @@ setMethod("is_descendant",
             else{return(all(younger_genotype[1:older_generation]==older_genotype))}
           })
 
+setGeneric("how_old_descendant",function(Population_younger,Population_older) stantardGeneric("is_descendant"))
+setMethod("how_old_descendant",
+          signature("Population",
+                    "Population"),
+          function(Population_younger,Population_older){
+            
+            younger_genotype<-Population_younger@genotype
+            younger_generation<-length(younger_genotype)
+            older_genotype<-Population_older@genotype
+            older_generation<-length(older_genotype)
+            
+            if(older_generation>younger_generation){return(Inf)}
+            
+            is_desc<-all(younger_genotype[1:older_generation]==older_genotype)
+            if(is_desc){
+              return(younger_generation-older_generation)
+            }else{return(Inf)}
+          })
+
+
 setGeneric("is_ancestor",function(Population_older,Population_younger) stantardGeneric("is_ancestor"))
 setMethod("is_ancestor",
           signature("Population",

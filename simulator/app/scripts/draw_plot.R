@@ -20,6 +20,12 @@ plot<-get_my_muller_plot(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                          freq = FALSE,
                          palette = c(1))
 
+plot<-plot+
+  theme(panel.margin = unit(0,"null"),
+        plot.margin = rep(unit(0,"null"),4),
+        axis.ticks.length = unit(0,"cm"),
+        axis.ticks.margin = unit(0,"cm"))
+
 ggsave(plot,device = "png",
        path = path_out,
        width = 9,height = 5,
