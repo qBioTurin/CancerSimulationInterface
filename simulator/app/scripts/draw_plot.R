@@ -6,12 +6,11 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",FALSE,"raw/labeled_colors.json","output")
+  args <- c("raw","raw/labeled_colors.json","output")
 }
 path_in<-args[1]
-path_out<-args[4]
-json_palette_file<-args[3]
-freq<-as.logical(args[2])
+path_out<-args[3]
+json_palette_file<-args[2]
 
 load(paste(path_in,"/obs_tumor.RData",sep=""))
 load(paste(path_in,"/Parameters.RData",sep=""))
@@ -19,24 +18,46 @@ json_palette<-fromJSON(file=json_palette_file)
 palette<-sapply(json_palette,function(el){el$color})
 names(palette)<-sapply(json_palette,function(el){el$label})
 
-plot_show<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
+plot_show_absolute<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                                 obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
-                                freq = freq,
+                                freq = FALSE,
                                 palette = palette,
                                 functional_effects = parameters@functional_effects)
 
-ggsave(plot_show,device = "png",
+ggsave(plot_show_absolute,device = "png",
        path = path_out,
        width = 9,height = 5,
-       filename="plot_show.png")
+       filename="plot_show_absolute.png")
 
-plot_download<-get_muller_plot_download(obs_Pop_ID = obs_tumor$obs_Pop_ID,
+plot_show_relative<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
+                                         obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
+                                         freq = TRUE,
+                                         palette = palette,
+                                         functional_effects = parameters@functional_effects)
+
+ggsave(plot_show_relative,device = "png",
+       path = path_out,
+       width = 9,height = 5,
+       filename="plot_show_relative.png")
+
+plot_download_absolute<-get_muller_plot_download(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                                 obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
-                                freq = freq,
+                                freq = FALSE,
                                 palette = palette,
                                 functional_effects = parameters@functional_effects)
 
-ggsave(plot_download,device = "pdf",
+ggsave(plot_download_absolute,device = "pdf",
        path = path_out,
        width = 9,height = 5,
-       filename="plot_download.pdf")
+       filename="plot_download_absolute.pdf")
+
+plot_download_relative<-get_muller_plot_download(obs_Pop_ID = obs_tumor$obs_Pop_ID,
+                                                 obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
+                                                 freq = TRUE,
+                                                 palette = palette,
+                                                 functional_effects = parameters@functional_effects)
+
+ggsave(plot_download_relative,device = "pdf",
+       path = path_out,
+       width = 9,height = 5,
+       filename="plot_download_relative.pdf")

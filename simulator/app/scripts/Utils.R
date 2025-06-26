@@ -668,13 +668,11 @@ setMethod("get_muller_plot_show",
                   theme_void()+
                   theme(
                     legend.position ="none",
-                    panel.margin = unit(0,"null"),
-                    plot.margin =  unit(rep(-1.25,4),"lines"),
+                    plot.margin =  unit(c(-17.5,-33,-17.5,-33), "pt"),
                     axis.ticks.length = unit(0,"cm"),
                     axis.ticks.margin = unit(0,"cm")
                   )
-                
-                
+
                 return(p)
                   
               }
@@ -788,8 +786,7 @@ setMethod("get_muller_plot_show",
                   guides(fill=guide_legend(title="Functional effect:",override.aes = list(color = palette_dark)))+
                   theme(
                     legend.position ="none",
-                    panel.margin = unit(0,"null"),
-                    plot.margin =  unit(rep(-1.25,4),"lines"),
+                    plot.margin =  unit(c(-17,-32,-17,-32), "pt"),
                     axis.ticks.length = unit(0,"cm"),
                     axis.ticks.margin = unit(0,"cm")
                   )
