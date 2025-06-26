@@ -5,31 +5,103 @@ import GeneralInformation from "@/components/general-information";
 import { parseJson } from "@/lib/parse-json";
 import Image from 'next/image';
 
-import { Button, Center, Container, Divider, Group } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
+import { Box, Button, ButtonGroup, Container, Divider, Grid, GridCol, Group, LoadingOverlay, SegmentedControl, Slider, Stack, Text } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
+import { IconChevronDown, IconChevronUp, IconMinus, IconPlayerPlayFilled, IconPlus } from "@tabler/icons-react";
+import { colorsAddButtonIcon, colorsPage, colorsPicker, colorsRunButton } from "@/components/colors";
+import LabelledColorPicker from "@/components/labelledColorPicker";
+import parseColors from "@/lib/parse-colors";
+import { useColorsLegendStore } from "@/lib/colors-legend-store";
+import { LineChart } from "@mantine/charts";
+import arrow_image from '@/assets/side_plot_show.png'
 
 export default function Home() {
 	const [endAnalysis, setEndAnalysis] = useState(false)
 	const [loading, setLoading] = useState(false)
-	const icon = <IconPlayerPlayFilled size={14} />;
 	const [version, setVersion] = useState<number | null>(null);
+	const [sliderValue, setSliderValue] = useState(0);
+	const [sequencing, setSequencing] = useState(false)
+	const [frequence, setFrequence] = useState('absolute')
+	const isFirstRender = useRef(true);
+	const [base, setBase] = useState(0)
+	const [exponent, setExponent] = useState(0)
+
+	const { colors, addColor, resetColors, changeColor, updateChangingColor, changingColor } = useColorsLegendStore()
+	const thumbOffset = (0.17 * sliderValue) - 14
+
+	const sliderPercent = (sliderValue / 100) * 100;
+
+	function addColorsStarting(_colors: { color: string, label: string }[]) {
+		resetColors()
+		_colors.map((c, i) => addColor({ label: c.label, color: colorsPicker[i % 20] }))
+	}
 
 	async function handleSubmit() {
 		setEndAnalysis(false)
 		setLoading(true)
-		await fetch('/api/proxy', {
+		const res = await fetch('/api/proxy', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(parseJson()),
-		}).then(() => {
-			setVersion(Date.now());
-			setEndAnalysis(true)
-			setLoading(false)
-		});
+			body: JSON.stringify({
+				sim: parseJson(),
+				image: parseColors()
+			}),
+		})
+
+		addColorsStarting((await res.json())['stdout'])
+
+		const res2 = await fetch('/api/draw_plot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				sim: parseJson(),
+				image: parseColors()
+			}),
+		})
+
+		const val = (await res2.json()).stdout
+		// console.log(val)
+		setBase(val.base)
+		setExponent(val.exponent)
+
+		setVersion(Date.now());
+		setEndAnalysis(true)
+		setLoading(false)
 	}
+
+	useEffect(() => {
+		if (isFirstRender.current) {
+			isFirstRender.current = false;
+			return;
+		}
+		const fetchData = async () => {
+			const res2 = await fetch('/api/draw_plot', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					sim: parseJson(),
+					image: parseColors()
+				}),
+			});
+
+			const result = await res2.json();
+			console.log(result);
+
+			setVersion(Date.now());
+			setEndAnalysis(true);
+			setLoading(false);
+			updateChangingColor()
+		};
+
+		updateChangingColor();
+		fetchData();
+	}, [changeColor])
 
 	return (
 		<>
@@ -40,22 +112,179 @@ export default function Home() {
 				<FunctionalEvents />
 				<Divider my="md" />
 				<Group justify="flex-end" >
-					<Button leftSection={icon} loading={loading} onClick={() => handleSubmit()} variant="outline">Run Simulation</Button>
+					<Button color={colorsRunButton} autoContrast leftSection={<IconPlayerPlayFilled size={14} />} loading={loading} onClick={() => handleSubmit()} variant="filled" size={"xl"} radius={"md"}>Run Simulation</Button>
 				</Group>
 				{endAnalysis &&
-					<Center mt={"xl"}>
-						<div style={{ position: "relative", width: "100%", height: "auto", aspectRatio: "16/9" }}>
-							<Image
-								key={version}
-								src={`/api/image?v=${version}`}
-								alt="Analysis Result"
-								fill
-								sizes="100vw"
-								style={{ objectFit: "contain" }}
-								unoptimized
-							/>
-						</div>
-					</Center>
+					<>
+						<h1>Results</h1>
+						<Grid align="center">
+							<GridCol span={4}>
+								<SegmentedControl value={frequence} onChange={setFrequence} style={{ backgroundColor: '#ede8e8' }} data={[
+									{ label: 'Absolute Frequence', value: 'absolute' },
+									{ label: 'Relative Frequence', value: 'relative' }]} />
+							</GridCol>
+							<GridCol span={3}>
+								<ButtonGroup>
+									<Button color={colorsAddButtonIcon} variant="outline" size={"xs"} radius="md">
+										<IconMinus />
+									</Button>
+									<Button color={colorsAddButtonIcon} variant="outline" size={"xs"} radius="md" >
+										<IconPlus />
+									</Button>
+								</ButtonGroup>
+							</GridCol>
+							<GridCol span={3} offset={2}>
+								<Group justify="flex-end">
+									<Button color={"black"} variant="transparent" autoContrast onClick={() => setSequencing(!sequencing)} rightSection={
+										(!sequencing && <IconChevronDown size={"15px"} />) || (sequencing && <IconChevronUp size={"15px"} />)
+									}>
+										<Text size="lg" fw={600}>Sequencing</Text>
+									</Button>
+								</Group>
+							</GridCol>
+						</Grid>
+						<Stack mt={"xl"}>
+							<Grid>
+								<GridCol span={1}>
+									<Box
+										style={{
+											height: '100%',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+										}}
+									>
+										<Box
+											style={{
+												transform: 'rotate(-90deg)',
+												transformOrigin: 'center',
+												whiteSpace: 'nowrap',
+											}}
+										>
+											<Text size="xl">{frequence.toUpperCase()} Frequence</Text>
+										</Box>
+									</Box>
+								</GridCol>
+								<GridCol span={10}>
+									<div style={{ width: "100%", aspectRatio: "16/9", position: "relative" }}>
+										<Image
+											key={version}
+											src={`/api/image?v=${version}&frequence=${frequence}`}
+											alt="Analysis Result"
+											fill
+											sizes="100vw"
+											style={{ objectFit: "contain" }}
+											unoptimized
+										/>
+										{sequencing &&
+											<div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+												<LineChart
+													gridAxis="none"
+													withXAxis={false}
+													withYAxis={false}
+													withDots={false}
+													withTooltip={false}
+													orientation="vertical"
+													yAxisProps={{ domain: [0, 100] }}
+													xAxisProps={{ domain: [0, 100] }}
+													data={[
+														{ date: "A", Apples: sliderValue },
+														{ date: "B", Apples: sliderValue }
+													]}
+													curveType="linear"
+													dataKey="date"
+													series={[
+														{ name: 'Apples', color: colorsAddButtonIcon },
+													]}
+													style={{ width: "100%", height: "100%" }}
+												/>
+											</div>
+										}
+									</div>
+									{sequencing &&
+										<>
+											<Slider color={colorsAddButtonIcon} domain={[0, 100]} styles={{
+												bar: {
+													height: '1px',
+													width: '1px'
+												},
+												thumb: {
+													width: '12px',
+													height: '12px',
+													transform: `translateX(${thumbOffset}px) translateY(-5px)`,
+												},
+											}} label={null} value={sliderValue} onChange={setSliderValue} />
+
+											<div
+												style={{
+													transform: `translateX(${sliderPercent - 3}%)`,
+													transition: 'left 0.2s ease',
+												}}
+											>
+												<Button w="60px" color={colorsAddButtonIcon} autoContrast variant="filled">GO</Button>
+											</div>
+										</>
+									}
+								</GridCol>
+								<GridCol span={1}>
+									<div style={{ aspectRatio: "1/6.92", position: "relative" }}>
+										<Image
+											key={version}
+											src={arrow_image}
+											alt="Analysis Result"
+											fill
+										/>
+										<div
+											style={{
+												position: "absolute",
+												top: 0,
+												left: 0,
+												width: "100%",
+												height: "100%",
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												pointerEvents: "none",
+												fontSize: "1.2rem",
+											}}
+										>
+											<span
+												style={{
+													backgroundColor: colorsPage.background,
+													padding: "0.2em 0.4em",
+													borderRadius: "4px", // opzionale, per bordi arrotondati
+													color: "black" // assicura contrasto leggibile
+												}}
+											>
+												{frequence === 'absolute' && (
+													<>
+														{base}&middot;10<sup>{exponent}</sup>
+													</>
+												)}
+												{frequence === 'relative' && (
+													<>
+														100%
+													</>
+												)}
+											</span>
+										</div>
+									</div>
+								</GridCol>
+							</Grid>
+
+							<Grid pos={"relative"} pt={"md"} pb={"md"}>
+								<LoadingOverlay visible={changingColor} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+
+								{colors.map((c, index) => {
+									return (
+										<GridCol key={index} span="content">
+											<LabelledColorPicker label={c.label} c={c.color} />
+										</GridCol>
+									)
+								})}
+							</Grid>
+						</Stack>
+					</>
 				}
 			</Container>
 		</>

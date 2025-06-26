@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-	const frequence = request.nextUrl.searchParams.get('frequence') as string;
-	const flaskUrl = `http://simulator:5000/download_image?frequence=${encodeURIComponent(frequence)}`;
+	const flaskUrl = `http://simulator:5000/download_side_plot`;
 
 	try {
 		const response = await fetch(flaskUrl);

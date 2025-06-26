@@ -12,18 +12,14 @@ def run_r_script():
         param = request.json
 
         os.makedirs("/data", exist_ok=True)
+        os.system("rm -rf /data/*")
 
         # Salva i parametri come file JSON
         with open("/data/params.json", "w") as f:
             json.dump(param, f, indent=4)
 
-        result = subprocess.run(
-            ["Rscript", "/app/scripts/run_simulation.R"],
-            capture_output=True,
-            text=True
-        )
         subprocess.run(
-            ["Rscript", "/app/scripts/draw_plot.R"],
+            ["Rscript", "/app/scripts/run_simulation.R", "/data/params.json", "/data"],
             capture_output=True,
             text=True
         )
@@ -33,11 +29,70 @@ def run_r_script():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route("/get_obs_tum", methods=["GET"])
+def get_obs_tum():
+    try:
+        subprocess.run(
+            ["Rscript", "/app/scripts/get_obs_tum.R", "/data", "3"],
+            capture_output=True,
+            text=True
+        )
+        
+        with open("/data/label_color.json", "r") as f:
+            data = json.load(f)
+
+        return jsonify({
+            "stdout": data,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/draw_plot", methods=["POST"])
+def draw_plot():
+    try:
+        param = request.json
+
+        os.makedirs("/data", exist_ok=True)
+
+        # Salva i parametri come file JSON
+        with open("/data/labeled_colors.json", "w") as f:
+            json.dump(param, f, indent=4)
+
+        subprocess.run(
+            ["Rscript", "/app/scripts/draw_plot.R", "/data",  "/data/labeled_colors.json", "/data"],
+            capture_output=True,
+            text=True
+        )
+        
+        with open("/data/little_label_k.json", "r") as f:
+            data = json.load(f)
+        
+        return jsonify({
+            "stdout": data,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @app.route("/download_image", methods=["GET"])
 def download_file():
+    frequence = request.args.get("frequence") if request.args.get("frequence") != '' else 'absolute'
     file_path = os.path.join(
         "/data",
-        "plot.png"
+        f"plot_show_{frequence}.png"
+    )
+    print(f"Open file: {file_path}")
+    
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return {"error": "File not found"}, 404
+
+
+@app.route("/download_side_plot", methods=["GET"])
+def download_side_plot():
+    file_path = os.path.join(
+        "/data",
+        f"side_plot_show.png"
     )
     print(f"Open file: {file_path}")
     

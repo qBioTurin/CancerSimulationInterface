@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import '@mantine/core/styles.css';
+import '@mantine/charts/styles.css';
 import { MantineProvider } from '@mantine/core';
 import AppShellLayout from "@/components/app-shell";
 
