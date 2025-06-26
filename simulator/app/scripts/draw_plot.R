@@ -18,6 +18,7 @@ json_palette<-fromJSON(file=json_palette_file)
 palette<-sapply(json_palette,function(el){el$color})
 names(palette)<-sapply(json_palette,function(el){el$label})
 
+
 plot_show_absolute<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                                 obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
                                 freq = FALSE,
@@ -28,6 +29,13 @@ ggsave(plot_show_absolute,device = "png",
        path = path_out,
        width = 9,height = 5,
        filename="plot_show_absolute.png")
+
+side_plot_show<-get_side_plot_show(obs_tumor$obs_tumor_tibble)+
+  theme(plot.margin =  unit(c(-17.5,-33,-17.5,-33), "pt"))
+ggsave(side_plot_show,device = "png",
+       path = path_out,
+       width = 1,height = 5,
+       filename="side_plot_show.png")
 
 plot_show_relative<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                                          obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
