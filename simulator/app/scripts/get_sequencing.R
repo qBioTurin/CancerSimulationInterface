@@ -53,7 +53,7 @@ composition<-tibble(mut=unique_mut_id,parent,fun_eff,ncells,mut_generation)%>%
 
 
 
-sampled_ncells<-as.vector(rmultinom(1,round(tot_ncells/100),ncells/tot_ncells))
+{sampled_ncells<-as.vector(rmultinom(1,round(tot_ncells/100),ncells/tot_ncells))
 tot_sampled_cells<-sum(sampled_ncells)
 
 pcr<-function(ncells_start,ncycles){
@@ -90,7 +90,7 @@ vcf_sample<-sampled_cells_info%>%
   mutate(VAF=sample_AD/sample_DP)%>%
   dplyr::select(-c(prob,ncells))
 
-vcf_sample
+vcf_sample}
 
 
 

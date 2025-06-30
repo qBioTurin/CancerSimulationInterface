@@ -1,0 +1,43 @@
+# Libraries
+library(packcircles)
+library(ggplot2)
+
+# Create data
+data <- tibble(group=1:length(ncells), value=ncells,fun_eff_col=sapply(fun_eff,function(f){paste(f,collapse=", ")})) 
+
+packing <- circleProgressiveLayout(data$value, sizetype='area')
+packing$radius <- 0.99*packing$radius
+
+
+dat.gg <- circleLayoutVertices(packing, npoints=50)
+
+data<-rename(data,"id"="group")
+data <- merge(data, dat.gg)
+
+# Make the plot
+p<-ggplot() + 
+  geom_polygon(data = data, aes(x, y, group = id, fill=fun_eff_col),
+               linewidth=0,
+               colour = "black") +
+  scale_fill_manual(values = palette)+
+  theme_void() + 
+  theme(legend.position="none") +
+  coord_equal()
+
+p
+
+plotly::ggplotly(p,tooltip="fill")
+
+devtools::install_github("jeromefroe/circlepackeR")
+
+library(circlepackeR)
+library(data.tree)
+library(treemap)
+
+prova_tree<-df%>%
+  mutate(pathString=paste(level_1,level_2,level_3,level_4,sep="/"),
+         levelName="")%>%
+  as.Node()
+circlepackeR(prova_tree,
+             size = "ncells")
+

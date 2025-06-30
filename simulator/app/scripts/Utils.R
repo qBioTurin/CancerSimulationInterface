@@ -578,11 +578,11 @@ setMethod("get_muller_plot_show",
                 
                 if(length(root)>1){
                   obs_tumor_tibble_clones<-bind_rows(
-                    obs_tumor_tibble%>%
-                      filter(Population_ID%in%root)%>%
+                    obs_tumor_tibble_clones%>%
+                      filter(clone%in%root)%>%
                       group_by(time)%>%
                       summarize(clone=0,
-                              Ncells_clone=sum(Ncells),
+                              Ncells_clone=sum(Ncells_clone),
                               fun_eff=NA),
                     obs_tumor_tibble_clones)
                   pop_with_sons<-c(0,n_sons$Population_ID[n_sons$n>0])
@@ -889,11 +889,11 @@ setMethod("get_muller_plot_download",
                 
                 if(length(root)>1){
                   obs_tumor_tibble_clones<-bind_rows(
-                    obs_tumor_tibble%>%
-                      filter(Population_ID%in%root)%>%
+                    obs_tumor_tibble_clones%>%
+                      filter(clone%in%root)%>%
                       group_by(time)%>%
                       summarize(clone=0,
-                                Ncells_clone=sum(Ncells),
+                                Ncells_clone=sum(Ncells_clone),
                                 fun_eff=NA),
                     obs_tumor_tibble_clones)
                   pop_with_sons<-c(0,n_sons$Population_ID[n_sons$n>0])
