@@ -41,7 +41,7 @@ write(toJSON(pop_nmut),file = paste(path,"seq_barplot_df.json",sep="/"))
 ggplot(pop_nmut)+
   geom_col(aes(x=names(ncells),y=ncells))
 ggplot(pop_nmut)+
-  geom_col(aes(x=names(npop),y=npop))
+  geom_col(aes(x=names(npop),y=as.numeric(npop)))
 
 # starting_muts<-sapply(starting_gen, function(g){
 #   starting_mut<-vector()
@@ -62,11 +62,14 @@ composition<-tibble(mut=unique_mut_id,parent,fun_eff,ncells,mut_generation)%>%
   arrange(desc(frequency))
 
 
+
+
 write(toJSON(composition%>%dplyr::select(fun_eff,frequency)
 ),file = paste(path,"seq_hist_df.json",sep="/"))
 
 ggplot(composition)+
   geom_histogram(aes(x=frequency))
+
 
 {sampled_ncells<-as.vector(rmultinom(1,round(tot_ncells/100),ncells/tot_ncells))
 tot_sampled_cells<-sum(sampled_ncells)

@@ -7,19 +7,25 @@ source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 source("scripts/Simulazioni_fenotipo_classi.R")
 
-set.seed(42)
-
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("params.json","raw")
+  args <- c("params.json","raw",.Random.seed)
 }
+
 json_data <- fromJSON(file=args[1])
 path<-args[2]
+if(length(args)==2){
+  seed_selected<-.Random.seed
+}else{
+  seed_selected<- args[3]
+}
+
 
 load(paste(path,"/Parameters.RData",sep=""))
 Nexp<-1
 
 simulazione(Nexp=Nexp,
+            seed=seed_selected,
             path = path,
             starting_gen = starting_gen,
             starting_fun_eff=starting_fun_eff,

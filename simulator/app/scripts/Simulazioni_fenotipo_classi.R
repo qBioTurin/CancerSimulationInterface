@@ -1,11 +1,11 @@
 epsilon_rel<-10^(-3) # errore massimo concesso a ogni step
 
-simulazione<-function(Nexp,path,starting_gen,starting_fun_eff,Ncells_start,parameters,tmax,Ncellsmax){
+simulazione<-function(Nexp,seed=.Random.seed,path,starting_gen,starting_fun_eff,Ncells_start,parameters,tmax,Ncellsmax){
   tryCatch(expr = {
     if(length(starting_fun_eff)!=length(starting_gen)){stop("Check genotype and functional effect association")}
-    path<-paste(path,"/sim",Nexp,sep="")
-    if (!file.exists(path)) {
-      dir.create(path,recursive =TRUE)
+    path_sim<-paste(path,"/sim",Nexp,sep="")
+    if (!file.exists(path_sim)) {
+      dir.create(path_sim,recursive =TRUE)
     }
     gc()
     
@@ -45,7 +45,7 @@ simulazione<-function(Nexp,path,starting_gen,starting_fun_eff,Ncells_start,param
       
       time_provv<-0
       save(list = c("Zprovv","time_provv"),
-           file=paste(path,"/Zprovv",count,".RData",sep=""))
+           file=paste(path_sim,"/Zprovv",count,".RData",sep=""))
       check_cond_end<-TRUE
       
       
@@ -99,14 +99,14 @@ simulazione<-function(Nexp,path,starting_gen,starting_fun_eff,Ncells_start,param
           count<-count+1
           print(time_provv)
           save(list = c("Zprovv","time_provv"),
-               file=paste(path,"/Zprovv",count,".RData",sep=""))
+               file=paste(path_sim,"/Zprovv",count,".RData",sep=""))
         }
       }
     }
     },
   error=function(cond) {
-    write.table(conditionMessage(cond),
-                "error.log")
+    write.table(paste(conditionMessage(cond),"\n",seed),
+                paste(path,"error.log",sep="/"))
       }
     )
 }
