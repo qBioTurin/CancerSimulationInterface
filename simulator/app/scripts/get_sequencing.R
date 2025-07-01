@@ -33,6 +33,16 @@ unique_mut_id<-lapply(gen,function(g){
 })
 nmut_in_gen<-lengths(gen)
 
+pop_nmut<-tibble(ncells=sapply(split(ncells,nmut_in_gen), sum),
+       npop=table(nmut_in_gen))
+
+write(toJSON(pop_nmut),file = paste(path,"seq_barplot_df.json",sep="/"))
+
+ggplot(pop_nmut)+
+  geom_col(aes(x=names(ncells),y=ncells))
+ggplot(pop_nmut)+
+  geom_col(aes(x=names(npop),y=npop))
+
 # starting_muts<-sapply(starting_gen, function(g){
 #   starting_mut<-vector()
 #   for(i in 1:length(g)){
@@ -52,6 +62,11 @@ composition<-tibble(mut=unique_mut_id,parent,fun_eff,ncells,mut_generation)%>%
   arrange(desc(frequency))
 
 
+write(toJSON(composition%>%dplyr::select(fun_eff,frequency)
+),file = paste(path,"seq_hist_df.json",sep="/"))
+
+ggplot(composition)+
+  geom_histogram(aes(x=frequency))
 
 {sampled_ncells<-as.vector(rmultinom(1,round(tot_ncells/100),ncells/tot_ncells))
 tot_sampled_cells<-sum(sampled_ncells)
@@ -92,48 +107,3 @@ vcf_sample<-sampled_cells_info%>%
 
 vcf_sample}
 
-
-
-library(collapsibleTree)
-
-parameters@functional_effects
-palette_new<-c("#636940","#64403E","#FCF6B1")
-names(palette_new)<-names(parameters@functional_effects)
-fun_eff_last<-sapply(
-  fun_eff,
-  function(f){
-    return(f[length(f)])
-  }
-)
-longest_gene<-max(lengths(gen))
-gen_complete<-lapply(gen, function(g){
-  g_complete<-c(g,rep("",longest_gene-length(g)))
-  names(g_complete)<-paste("level",1:longest_gene,sep="_")
-  return(g_complete)
-  })
-
-df<-bind_cols(bind_rows(gen_complete),ncells=ncells)
-collapsibleTree(as.data.frame(df),
-                hierarchy = paste("level",1:longest_gene,sep="_"),
-                fontSize=0,collapsed = FALSE,
-                nodeSize="ncells",root="tumor",
-                fill=c("",fun_eff_last))
-
-
-prova<-tibble(mut=unique_mut_id,sampled_ncells)%>%filter(sampled_ncells>0)
-cells<-unlist(mapply(function(g,n){
-  return(rep(list(g),n))
-},prova$mut,prova$sampled_ncells,SIMPLIFY = TRUE),recursive = FALSE)
-
-prova<-tibble(cells)%>%
-  mutate(id=row_number())%>%
-  unnest(cells)%>%
-  pivot_wider(names_from = cells,values_from = cells,values_fn = as.numeric,values_fill = 0)
-
-heatmap(as.matrix(prova[,-1]))
-prova<-tibble(mut=unique_mut_id,ncells)%>%
-  mutate(id=row_number())%>%
-  unnest(mut)%>%
-  pivot_wider(names_from = mut,values_from = ncells)
-ggplot()+
-  geom_tile()

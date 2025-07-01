@@ -105,12 +105,8 @@ simulazione<-function(Nexp,path,starting_gen,starting_fun_eff,Ncells_start,param
     }
     },
   error=function(cond) {
-      message(conditionMessage(cond))
-      
-      
-      save(list = ls(all.names = TRUE),
-           file = paste(path,"/sim",Nexp,"_error_environment.RData",sep=""))  
-      return(NULL)
+    write.table(conditionMessage(cond),
+                "error.log")
       }
     )
 }

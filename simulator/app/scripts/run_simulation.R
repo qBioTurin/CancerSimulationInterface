@@ -7,6 +7,7 @@ source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 source("scripts/Simulazioni_fenotipo_classi.R")
 
+set.seed(42)
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
