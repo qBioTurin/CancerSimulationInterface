@@ -62,8 +62,6 @@ composition<-tibble(mut=unique_mut_id,parent,fun_eff,ncells,mut_generation)%>%
   arrange(desc(frequency))
 
 
-
-
 write(toJSON(composition%>%dplyr::select(fun_eff,frequency)
 ),file = paste(path,"seq_hist_df.json",sep="/"))
 
