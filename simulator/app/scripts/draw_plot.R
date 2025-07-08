@@ -48,33 +48,27 @@ names(little_label_k)<-c("base","exponent")
 write(toJSON(little_label_k),file = paste(path_in,"little_label_k.json",sep="/"))
 
 
-plot_show_relative<-get_muller_plot_show(obs_Pop_ID = obs_tumor$obs_Pop_ID,
-                                         obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
+plot_show_relative<-get_muller_plot_show(Clones_df = Clones_df_relative,
                                          freq = TRUE,
-                                         palette = palette,
-                                         functional_effects = parameters@functional_effects)
+                                         palette = palette)
 
 ggsave(plot_show_relative,device = "png",
        path = path_out,
        width = 9,height = 5,
        filename="plot_show_relative.png")
 
-plot_download_absolute<-get_muller_plot_download(obs_Pop_ID = obs_tumor$obs_Pop_ID,
-                                obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
-                                freq = FALSE,
-                                palette = palette,
-                                functional_effects = parameters@functional_effects)
+plot_download_absolute<-get_muller_plot_download(Clones_df = Clones_df_absolute,
+                                                 freq = FALSE,
+                                                 palette = palette)
 
 ggsave(plot_download_absolute,device = "pdf",
        path = path_out,
        width = 9,height = 5,
        filename="plot_download_absolute.pdf")
 
-plot_download_relative<-get_muller_plot_download(obs_Pop_ID = obs_tumor$obs_Pop_ID,
-                                                 obs_tumor_tibble = obs_tumor$obs_tumor_tibble,
+plot_download_relative<-get_muller_plot_download(Clones_df = Clones_df_relative,
                                                  freq = TRUE,
-                                                 palette = palette,
-                                                 functional_effects = parameters@functional_effects)
+                                                 palette = palette)
 
 ggsave(plot_download_relative,device = "pdf",
        path = path_out,
