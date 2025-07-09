@@ -64,7 +64,7 @@ p<-get_tree_plot_app(composition)
 p
 ggsave(p,device = "png",
        path = path_out,
-       filename="plot_tree_sequenced.png")
+       filename=paste(path_out,"plot_tree_sequenced.png",sep="/"))
 
 
 tibble(unique_mut_id,ncells,nmut_in_gen)%>%
