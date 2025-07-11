@@ -753,7 +753,7 @@ get_tree_plot_app<-function(df,palette){
       theme(legend.position = "none")
   }
   else{
-    if(nrow(df$mut)<10){
+    if(length(df$mut)<10){
       wanted_mut<-df$mut
     }
     else{
