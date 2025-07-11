@@ -74,7 +74,7 @@ p<-get_tree_plot_app(composition,palette)
 p
 ggsave(p,device = "png",
        path = path_out,
-       filename=paste(path_out,"plot_tree_sequenced.png",sep="/"))
+       filename="plot_tree_sequenced.png")
 
 
 table_pops<-tibble(pop_id=1:length(pop),mut=unique_mut_id,fun_eff)%>%
