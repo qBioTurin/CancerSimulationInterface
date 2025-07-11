@@ -753,7 +753,11 @@ get_tree_plot_app<-function(df,palette){
       theme(legend.position = "none")
   }
   else{
-    wanted_mut<-unname(
+    if(nrow(df$mut)<10){
+      wanted_mut<-df$mut
+    }
+    else{
+      wanted_mut<-unname(
       unlist(
         lapply(split(df$mut,
                      df$parents),
@@ -764,7 +768,8 @@ get_tree_plot_app<-function(df,palette){
                }
         )
       )
-    )
+      )
+      }
     
     wanted_mut<-unique(c(wanted_mut,unique(df$mut[is.na(df$parents)])))
 
@@ -811,6 +816,25 @@ get_tree_plot_app<-function(df,palette){
       mutate(n_mut_layer=n())
     
     size_label<-min(40/max(nodes_coord$n_mut_layer),6)
+    
+    if(sum(!is.na(unique(layout_df$y)))==1){
+      plot<-ggplot()+
+        geom_label(data=nodes_coord,
+                   aes(x=x,y=y,label=label,
+                       fill=fun_eff),
+                   #size=1.5,
+                   size=size_label,
+                   label.r =unit(0.5,"lines"),
+                   label.size = 0)+
+        xlim(x_lim)+
+        ylim(y_lim)+
+        coord_fixed()+
+        scale_fill_manual(values=palette,na.value = "white")+
+        theme_void()+
+        theme(legend.position = "none")
+    }
+    else{
+    
     
     
     mid_pts<-unique(nodes_coord$x)+x_range[2]/x_grid
@@ -859,6 +883,7 @@ get_tree_plot_app<-function(df,palette){
       scale_fill_manual(values=palette,na.value = "white")+
       theme_void()+
       theme(legend.position = "none")
+    }
   }
   return(plot)
 }
