@@ -69,6 +69,8 @@ hist_plot<-ggplot(hist_df)+
   theme(axis.text.x = element_text(color="black"))
 ggsave(hist_plot,device = "png",
        path = path_out,
+       height = 3,
+       width = 4,
        filename="hist_plot.png")
 
 hist_plot_fun_eff<-ggplot(hist_df)+
@@ -79,6 +81,8 @@ hist_plot_fun_eff<-ggplot(hist_df)+
         axis.text.x = element_text(color="black"))
 ggsave(hist_plot_fun_eff,device = "png",
        path = path_out,
+       height = 3,
+       width = 4,
        filename="hist_plot_fun_eff.png")
 
 roots<-composition$mut[is.na(composition$parents)]
