@@ -6,7 +6,7 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",20,"output")
+  args <- c("raw",50,"output")
 }
 path_in<-args[1]
 path_out<-args[3]
@@ -63,7 +63,7 @@ if(length(root)>1){
   root<-0
 }
 
-Clones_df<-tibble(clone=Pop_ID,Ncells_clone=ncells_clone)%>%
+Clones_df<-tibble(clone=Pop_ID,Ncells_clone=ncells_clone,Ncells=ncells)%>%
   filter(clone%in%root)%>%
   mutate(y_lower=-Ncells_clone/2,
          y_upper=Ncells_clone/2)
@@ -83,6 +83,8 @@ for(p in pop_with_sons){
       mutate(center=(y_upper+y_lower)/2)%>%
       pull(center)
     
+    Ncells_d<-ncells[Pop_ID==d]
+    
     Ncells_parent<-ncells[Pop_ID==p]
     
     Ncells_parent_clone<-ncells_clone[Pop_ID==p]
@@ -93,6 +95,7 @@ for(p in pop_with_sons){
     d_df<-tibble(
       clone=d,
       Ncells_clone=ncells_clone[Pop_ID==d],
+      Ncells=Ncells_d,
       Ncells_p=Ncells_parent,
       Ncells_p_clone=Ncells_parent_clone,
       Ncells_s=Ncells_older_siblings,
@@ -100,7 +103,7 @@ for(p in pop_with_sons){
     )%>%
       mutate(y_lower=sum(center,prop_y_start*Ncells_p,-Ncells_p_clone/2,Ncells_s,na.rm=TRUE),
              y_upper=y_lower+Ncells_clone)%>%
-      dplyr::select(clone,Ncells_clone,y_lower,y_upper)
+      dplyr::select(clone,Ncells_clone,y_lower,y_upper,Ncells)
     
     Clones_df<-rbind(Clones_df,d_df)
   }
@@ -139,12 +142,14 @@ pcr<-function(ncells_start,ncycles){
   return(ncells)
 }
 
-
 Clones_df_seq<-Clones_df%>%
   filter(y_lower<seq_max_y,y_upper>seq_min_y)%>%
+  merge(tibble(clone=Pop_ID,
+               mut=sapply(unique_mut_id,function(muts){muts[length(muts)]}),
+               fun_eff=sapply(fun_eff_label,function(funcs){funcs[length(funcs)]})))%>%
   rowwise()%>%
-  mutate(Ncells_seq=(min(y_upper,seq_max_y)-max(y_lower,seq_min_y)))%>%
-  dplyr::select(clone,Ncells_seq)%>%
+  mutate(Ncells_seq=round(min(y_upper,seq_max_y)-max(y_lower,seq_min_y)))%>%
+  dplyr::select(mut,Ncells_seq,fun_eff)%>%
   mutate(ncells_post_PCR=pcr(Ncells_seq,10))%>%
   ungroup()%>%
   mutate(tot_ncells_post_PCR=sum(ncells_post_PCR))%>%
@@ -176,22 +181,26 @@ write(toJSON(vcf_sample),file=paste(path_out,"vcf_sampled.json",sep="/"))
 
 load(paste(path_in,"Clones_df_absolute.RData",sep="/"))
 
-range_plot_zoom<-unique(Clones_df_absolute$time)[which(sort(unique(Clones_df_absolute$time))==time_provv)+c(-1,1)]
+range_plot_zoom_x<-unique(Clones_df_absolute$time)[which(sort(unique(Clones_df_absolute$time))==time_provv)+c(-1,1)]
+range_plot_zoom_y<-c(min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]),
+                     max(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]))
 xmin_rect<-time_provv-diff(range_plot_zoom)/50
 xmax_rect<-time_provv+diff(range_plot_zoom)/50
 y_trasl<-min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv])
 
 p<-plot_show_absolute+
-  coord_cartesian(xlim =range_plot_zoom)+
+  coord_cartesian(xlim =range_plot_zoom_x,
+                  ylim = range_plot_zoom_y)+
   geom_vline(xintercept = time_provv,color="white",alpha=0.4)+
   geom_rect(aes(xmin = xmin_rect,
                 xmax = xmax_rect,
                 ymin = seq_min_y+y_trasl,
-                ymax=seq_max_y),
+                ymax=seq_max_y+y_trasl),
             fill="transparent",
             color="black",
             linetype = 2,
             linewidth = 0.5)
 p
+vcf_sample
 
 ggsave(plot=p,filename = "zoom_sequence_plot.png",device = "png",width = 5,height = 5,path = path_out)

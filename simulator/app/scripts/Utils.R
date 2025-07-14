@@ -735,18 +735,20 @@ elbowed_link<-function(x1,y1,x2,y2,r,x_mean){
 }
 
 get_tree_plot_app<-function(df,palette){
-  if(nrow(df)==1){
+  if(all(is.na(df$parents))){
     wanted_mut<-df$mut
+    df$y<-1:length(wanted_mut)
+
     plot<-ggplot(df)+
-      geom_label(aes(x=0,y=0,label="Mut1",
+      geom_label(aes(x=0,y=y,label=names,
                      fill=fun_eff),
                  label=df$names,
                  #size=1.5,
-                 size=10,
+                 size=6,
                  label.r =unit(0.5,"lines"),
                  label.size = 0)+
       xlim(-0.1,0.1)+
-      ylim(-0.1,0.1)+
+      ylim(0.9,length(df$mut)+0.1)+
       coord_fixed()+
       scale_fill_manual(values=palette,na.value = "white")+
       theme_void()+
@@ -770,7 +772,6 @@ get_tree_plot_app<-function(df,palette){
       )
       )
       }
-    
     wanted_mut<-unique(c(wanted_mut,unique(df$mut[is.na(df$parents)])))
 
     mut_info<-df%>%
