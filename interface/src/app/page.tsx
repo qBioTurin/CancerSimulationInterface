@@ -213,6 +213,7 @@ export default function Home() {
 	return (
 		<>
 			<Container mb={50}>
+				
 				<SimulationStep />
 				<Divider my="md" />
 				<FunctionalEvents />

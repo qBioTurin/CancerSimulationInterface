@@ -23,7 +23,7 @@ export default function SimulationResults() {
 	const { depth, changingDepth, imageVersion, plotBase, plotExponent, updateDepth } = useSimulationPlotOptionsStore()
 	const { colors, changingColor } = useColorsLegendStore()
 	const { savingCheckpoints, endingTime } = useSimulationStepStore()
-	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay, setDataTableMut, updatePlotVersion } = useSequencingStore()
+	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay, setDataTableMut, setNumSeq, updatePlotVersion } = useSequencingStore()
 
 	async function downloadPDF() {
 		const response = await fetch(`/api/download_pdf?frequence=${frequence}`);
@@ -54,6 +54,8 @@ export default function SimulationResults() {
 				'Content-Type': 'application/json',
 			},
 		});
+
+		setNumSeq(numSeq)
 
 		const result = await res2.json();
 		setLoadSequencing(false)

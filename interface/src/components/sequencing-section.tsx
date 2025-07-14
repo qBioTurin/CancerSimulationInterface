@@ -1,14 +1,30 @@
 import { BarChart } from "@mantine/charts";
-import { Card, Center, SimpleGrid, Stack, Text } from "@mantine/core";
+import { Button, Card, Center, Grid, GridCol, Group, SimpleGrid, Stack, Switch, Text } from "@mantine/core";
 import PopulationsHeatmap from "./charts/populations-heatmap";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import Image from "next/image";
 import { useSimulationPlotOptionsStore } from "@/lib/simulation-plot-options";
 import SequencingTable from "./charts/sequencing-table";
-import { colorsPage } from "./colors";
+import { colorsPage, colorsRunButton } from "./colors";
+import { useState } from "react";
+import VCFTable from "./vcf-table";
 
 export default function SequencingSection() {
-	const { dataPlot, dataPlotStacked, series, sequencingDay, plotVersion } = useSequencingStore()
+	const { dataPlot, dataPlotStacked, series, sequencingDay, plotVersion, numSeq, updateSubsampleVersion, subsampleVersion } = useSequencingStore()
+	const [colored, setColored] = useState(false);
+	const [subsample, setSubsample] = useState(false)
+
+	const sequencingSubsample = async () => {
+		setSubsample(false)
+		const subsample = await fetch(`/api/get_sequencing_subsample?numSeq=${numSeq}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		})
+		setSubsample(true)
+		updateSubsampleVersion()
+	}
 
 	return (
 		<Card mt={"lg"} shadow="sm"
@@ -54,11 +70,44 @@ export default function SequencingSection() {
 					/>
 				</Stack>
 				<Stack>
-					<Text >
-						Variant prevalence histogram
-					</Text>
+					<Grid>
+						<GridCol span={7}>
+							<Text>
+								Variant prevalence histogram
+							</Text>
+						</GridCol>
+						<GridCol span={2}>
+							<Switch
+								checked={colored}
+								onChange={(event) => setColored(event.currentTarget.checked)}
+							/>
+						</GridCol>
+					</Grid>
+					<Image
+						src={`/api/histogram?colored=${colored}&v=${plotVersion}`}
+						alt="Tree"
+						height={350}
+						width={400}
+					/>
 				</Stack>
 			</SimpleGrid>
+			<Group justify="center" mt={"xl"}>
+				<Button onClick={sequencingSubsample} color={colorsRunButton}>Randomly subsample</Button>
+			</Group>
+			{subsample && (
+				<SimpleGrid cols={2} mt={"lg"}>
+					<Image
+						key={subsampleVersion}
+						src={`/api/zoom_sequence?v=${subsampleVersion}`}
+						alt=""
+						height={350}
+						width={400}
+					/>
+					<div>
+						<VCFTable />
+					</div>
+				</SimpleGrid>
+			)}
 		</Card>
 	)
 }

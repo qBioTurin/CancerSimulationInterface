@@ -11,6 +11,9 @@ interface Sequencing {
 	dataTableMut: RowMutTable[];
 	series: { name: string; color: string }[];
 
+	numSeq: number;
+	subsampleVersion: number;
+
 	setSequenced: (newSequenced: boolean) => void;
 	setSequencingDay: (newSequencingDay: number) => void;
 
@@ -19,6 +22,8 @@ interface Sequencing {
 	setDataTableMut: (newDataTableMut: RowMutTable[]) => void;
 	setSeries: (newSeries: { name: string; color: string }[]) => void;
 	updatePlotVersion: () => void;
+	setNumSeq: (newNumSeq: number) => void;
+	updateSubsampleVersion: () => void;
 }
 
 export const useSequencingStore = create<Sequencing>((set) => ({
@@ -28,11 +33,15 @@ export const useSequencingStore = create<Sequencing>((set) => ({
 	dataPlotStacked: [],
 	dataTableMut: [],
 	series: [],
+	numSeq: 0,
 
 	plotVersion: 0,
+	subsampleVersion: 0,
 
 	setSequenced: (newSequenced: boolean) => set(() => ({ sequenced: newSequenced })),
 	setSequencingDay: (newSequencingDay: number) => set(() => ({ sequencingDay: newSequencingDay })),
+
+	setNumSeq: (newNumSeq: number) => set(() => ({ numSeq: newNumSeq })),
 
 	setDataPlot: (newDataPlot: { nMut: number, nCells: number, nPop: number }[]) => set(() => ({ dataPlot: newDataPlot })),
 	setDataPlotStacked: (newDataPlotStacked: Record<string, string | number>[]) => set(() => ({ dataPlotStacked: newDataPlotStacked })),
@@ -41,4 +50,7 @@ export const useSequencingStore = create<Sequencing>((set) => ({
 	updatePlotVersion: () => set((state) => ({
 		plotVersion: state.plotVersion + 1
 	})),
+	updateSubsampleVersion: () => set((state) => ({
+		subsampleVersion: state.subsampleVersion + 1
+	}))
 }));

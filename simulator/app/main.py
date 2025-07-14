@@ -167,5 +167,54 @@ def get_sequencing():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route("/get_sequencing_subsample", methods=["GET"])
+def get_sequencing_subsample():
+    numSeq = request.args.get("numSeq")
+    try:
+        subprocess.run(
+            ["Rscript", "/app/scripts/get_sequencing_subsample.R", "/data", numSeq, "/data"],
+            capture_output=True,
+            text=True
+        )
+        subprocess.run(
+            ["Rscript", "/app/scripts/redo_get_sequencing_subsample.R", "/data", numSeq, "/data"],
+            capture_output=True,
+            text=True
+        )
+
+        return jsonify({
+            "ok": 'okt'
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/histogram", methods=["GET"])
+def histogram():
+    colored = request.args.get("colored") if request.args.get("colored") != '' else False
+
+    file_path = os.path.join(
+        "/data",
+        f"hist_plot{'_fun_eff' if colored == 'true' else ''}.png"
+    )
+    print(f"Open file: {file_path}")
+    
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return {"error": "File not found"}, 404
+    
+@app.route("/zoom_sequence", methods=["GET"])
+def zoom_sequence():
+    file_path = os.path.join(
+        "/data",
+        f"zoom_sequence_plot.png"
+    )
+    print(f"Open file: {file_path}")
+    
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return {"error": "File not found"}, 404
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

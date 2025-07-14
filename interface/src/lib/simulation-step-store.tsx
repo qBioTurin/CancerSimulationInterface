@@ -26,7 +26,7 @@ export const useSimulationStepStore = create<SimulationStep>((set) => ({
   mutationRate: 8e-9,
   mutableBases: 5000,
 
-  endingTime: 2 * 365,
+  endingTime: 365,
   savingCheckpoints: 50,
   threads: 1,
 
