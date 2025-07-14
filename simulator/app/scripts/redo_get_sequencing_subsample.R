@@ -19,6 +19,8 @@ Nexp<-1
 
 load(paste(path_in,"/sim",Nexp,"/Zprovv",num_seq,".RData",sep=""))
 
+time_provv<-parameters@print_time[which.min(abs(time_provv-parameters@print_time))]
+
 pop<-lapply(Zprovv,Population)
 Pop_ID<-1:length(pop)
 ncells<-sapply(Zprovv,Ncells)
