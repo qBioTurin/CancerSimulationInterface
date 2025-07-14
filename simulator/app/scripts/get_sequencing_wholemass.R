@@ -60,8 +60,26 @@ composition<-tibble(mut=unique_mut_id,parents,fun_eff,ncells,mut_generation)%>%
   arrange(desc(frequency))%>%
   merge(mut_names_tbl)
 
-write(toJSON(composition%>%dplyr::select(fun_eff,frequency)
-),file = paste(path_in,"seq_hist_df.json",sep="/"))
+
+hist_df<-composition%>%dplyr::select(fun_eff,frequency)
+write(toJSON(hist_df),file = paste(path_in,"seq_hist_df.json",sep="/"))
+hist_plot<-ggplot(hist_df)+
+  geom_histogram(aes(x=frequency),fill="#AFABAB")+
+  theme_void()+
+  theme(axis.text.x = element_text(color="black"))
+ggsave(hist_plot,device = "png",
+       path = path_out,
+       filename="hist_plot.png")
+
+hist_plot_fun_eff<-ggplot(hist_df)+
+  geom_histogram(aes(x=frequency,fill=fun_eff))+
+  theme_void()+
+  scale_fill_manual(values=palette)+
+  theme(legend.position = "none",
+        axis.text.x = element_text(color="black"))
+ggsave(hist_plot_fun_eff,device = "png",
+       path = path_out,
+       filename="hist_plot_fun_eff.png")
 
 roots<-composition$mut[is.na(composition$parents)]
 
