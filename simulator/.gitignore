@@ -11,3 +11,4 @@ app/params.json
 app/raw
 app/output
 app/label_color.json
+!dens.RData
