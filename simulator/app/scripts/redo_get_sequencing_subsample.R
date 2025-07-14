@@ -6,7 +6,7 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",30,"output")
+  args <- c("raw",16,"output")
 }
 path_in<-args[1]
 path_out<-args[3]
@@ -73,7 +73,7 @@ load(paste(path_in,"Clones_df_absolute.RData",sep="/"))
 
 range_plot_zoom_x<-unique(Clones_df_absolute$time)[which(sort(unique(Clones_df_absolute$time))==time_provv)+c(-1,1)]
 range_plot_zoom_y<-c(min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]),
-                     max(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]))
+                     max(Clones_df_absolute$y_upper[Clones_df_absolute$time==time_provv]))
 xmin_rect<-time_provv-diff(range_plot_zoom_x)/50
 xmax_rect<-time_provv+diff(range_plot_zoom_x)/50
 y_trasl<-min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv])
