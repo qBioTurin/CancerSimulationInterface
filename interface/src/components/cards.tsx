@@ -1,7 +1,6 @@
 'use client'
-import { Card, CloseButton, TextInput, Text, Slider, Group, Grid, GridCol } from "@mantine/core";
+import { Card, CloseButton, TextInput, Text, Slider, Grid, GridCol } from "@mantine/core";
 import { colors } from "./colors";
-import { defaultEventParams } from "./default-values";
 import { Event } from "./interfaces";
 
 export function CardGrowth({ event, removeEvent, updateEventName, updateEventParam }: { event: Event; removeEvent: (eventToRemove: Event) => void; updateEventName: (eventToRename: Event, newName: string) => void; updateEventParam: (eventToUpdate: Event, paramName: keyof NonNullable<Event["params"]>, value: number) => void }) {

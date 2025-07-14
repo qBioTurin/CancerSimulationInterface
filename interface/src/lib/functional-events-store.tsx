@@ -12,9 +12,10 @@ interface FunctionalEvents {
 	updateEventFrequency: (functionalEvents: Event, newFrequency: number) => void;
 	updateEventParam: (functionalEvents: Event, paramName: string, value: number) => void;
 	updateNextFunctionalEventId: () => void;
+	getEffectByName: (name: string) => string;
 }
 
-export const useFunctionalEventsStore = create<FunctionalEvents>((set) => ({
+export const useFunctionalEventsStore = create<FunctionalEvents>((set, get) => ({
 	functionalEvents: [
 		{ id: 1, name: "Growth1", type: "growth", frequency: defaultFrequency, params: { proliferativeAdvantage: defaultEventParams.proliferativeAdvantage } },
 		{ id: 2, name: "Competition2", type: "competition", frequency: defaultFrequency, params: { susceptibility: defaultEventParams.susceptibility, offensiveScore: defaultEventParams.offensiveScore } },
@@ -62,5 +63,8 @@ export const useFunctionalEventsStore = create<FunctionalEvents>((set) => ({
 		set((state) => ({
 			nextFunctionalEventId: state.nextFunctionalEventId + 1,
 		})),
+
+	getEffectByName: (name) =>
+		get().functionalEvents.find((event) => event.name === name)?.type || "",
 
 }));

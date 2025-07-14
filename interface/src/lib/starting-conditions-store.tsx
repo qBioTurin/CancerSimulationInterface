@@ -9,6 +9,8 @@ interface StartingConditions {
 	populations: Population[];
 	nextPopulationId: number;
 
+	mutationDict: { [key: string]: string };
+
 	addMutations: (mut: Mutation) => void;
 	updateMutations: (mut: Mutation, event: number) => void;
 	updateNextMutationId: () => void;
@@ -21,6 +23,8 @@ interface StartingConditions {
 	addMutationToPopulation: (population: Population, mutation: string) => void;
 	removeMutationFromPopulation: (population: Population, mutation: string) => void;
 	removePopulation: (population: Population) => void;
+
+	addMutationToDict: (key: string, val: string) => void;
 }
 
 export const useStartingConditionsStore = create<StartingConditions>((set) => ({
@@ -31,6 +35,8 @@ export const useStartingConditionsStore = create<StartingConditions>((set) => ({
 
 	populations: [{ id: 1, name: "Pop1", mutations: ["Mut1"], numberOfCells: 1 }],
 	nextPopulationId: 2,
+
+	mutationDict: {},
 
 	addMutations: (mut) =>
 		set((state) => ({
@@ -88,5 +94,10 @@ export const useStartingConditionsStore = create<StartingConditions>((set) => ({
 	removePopulation: (population) =>
 		set((state) => ({
 			populations: state.populations.filter((p) => population.id !== p.id)
-		}))
+		})),
+
+	addMutationToDict: (key, val) =>
+		set((state) => ({
+			mutationDict: { ...state.mutationDict, [key]: val }
+		})),
 }));

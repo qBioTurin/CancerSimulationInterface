@@ -2,6 +2,7 @@ import { TreeNode } from "@/components/interfaces";
 import { useFunctionalEventsStore } from "./functional-events-store";
 import { useStartingConditionsStore } from "./starting-conditions-store";
 import { useSimulationStepStore } from "./simulation-step-store";
+import { colors, colorsPills } from "@/components/colors";
 
 function groupSets(sets: Set<string>[]): Set<string>[][] {
 	const groups: Set<string>[][] = [];
@@ -82,9 +83,11 @@ function generateTree(sets: Set<string>[]): TreeNode[] {
 }
 
 function renameTreeNodes(nodes: TreeNode[], prefix: string = ''): TreeNode[] {
+	const { addMutationToDict } = useStartingConditionsStore.getState();
 	return nodes.map((node, index) => {
-		// const currentId = prefix ? `${prefix}_${index + 1}` : `${index + 1}`;
-		const currentId = `${index + 1}`
+		const currentId = prefix ? `${prefix}_${index + 1}` : `${index + 1}`;
+		// const currentId = `${index + 1}`
+		addMutationToDict(node.key, currentId);
 		return {
 			key: node.key,
 			data: currentId,
@@ -130,19 +133,23 @@ export function parseJson() {
 
 	const tree = renameTreeNodes(generateTree((populations.map(p => new Set(p.mutations)))))
 
-	const genotype: number[][] = []
+	const { mutationDict } = useStartingConditionsStore.getState()
+
+	const genotype: any[][] = []
 	const phenotype: any[] = []
 	const numCells: number[] = []
 
 	try {
 		populations.filter(p => p.mutations.length > 0).map((p) => {
-			genotype.push(p.mutations.map(m => Number(findDataByKey(tree, m))))
+			genotype.push(p.mutations.map(m => findDataByKey(tree, m)))
 			phenotype.push(p.mutations.map(m => mutations.filter(m1 => m1.name === m)[0].event))
 			numCells.push(p.numberOfCells)
 		})
 	} catch (e) {
 		throw new Error('Internal server error: Populations')
 	}
+
+
 
 	const jsonObject = {
 		cellLife: cellLifeDays,
@@ -151,12 +158,18 @@ export function parseJson() {
 		mutableBases,
 		endingTime,
 		savingCheckpoints,
-		functionalEvents,
+		functionalEvents: functionalEvents.map(e => {
+			return {
+				...e,
+				color: colors[e.type]
+			}
+		}),
 		populations: {
-			genotype,
+			genotype: genotype.map(gt => gt.map(g => Number(g.split('_').at(-1)))),
 			phenotype,
 			numCells
-		}
+		},
+		mutationDict
 	};
 
 	return jsonObject

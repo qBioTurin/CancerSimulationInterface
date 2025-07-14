@@ -2,15 +2,13 @@
 import FunctionalEvents from "@/components/functional-events";
 import { parseJson } from "@/lib/parse-json";
 
-import { Button, Container, Divider, Grid, GridCol, Group, Progress, Card } from "@mantine/core";
+import { Button, Container, Divider, Grid, GridCol, Group, Progress } from "@mantine/core";
 import React, { useEffect, useRef, useState } from "react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { colorsAddButtonIcon, colorsPicker, colorsRunButton } from "@/components/colors";
 import parseColors from "@/lib/parse-colors";
 import { useColorsLegendStore } from "@/lib/colors-legend-store";
-import { BarChart } from "@mantine/charts";
 import { notifications } from "@mantine/notifications";
-import PopulationsHeatmap from "@/components/charts/populations-heatmap";
 import { useStartingConditionsStore } from "@/lib/starting-conditions-store";
 import SimulationStep from "@/components/simulation-step";
 import { useSimulationStepStore } from "@/lib/simulation-step-store";
@@ -18,6 +16,7 @@ import StartingConditions from "@/components/starting-conditions";
 import { useSimulationPlotOptionsStore } from "@/lib/simulation-plot-options";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import SimulationResults from "@/components/simulation-results";
+import SequencingSection from "@/components/sequencing-section";
 
 export default function Home() {
 	const [endAnalysis, setEndAnalysis] = useState(false)
@@ -26,12 +25,11 @@ export default function Home() {
 	// const [error, setError] = useState(false)
 	const [percentage, setPercentage] = useState(0)
 
-	const { colors, addColor, resetColors, changeColor, updateChangingColor, changingColor } = useColorsLegendStore()
-	const { sequenced, sequencingDay, setSequenced } = useSequencingStore()
+	const { addColor, resetColors, changeColor, updateChangingColor } = useColorsLegendStore()
+	const { sequenced, setSequenced } = useSequencingStore()
 
 	const { depth, updateImageVersion, setPlotBase, setPlotExponent, updateChangingDepth } = useSimulationPlotOptionsStore()
 
-	const {dataPlot, dataPlotStacked, series} = useSequencingStore()
 
 	function addColorsStarting(_colors: { color: string, label: string }[]) {
 		resetColors()
@@ -215,7 +213,6 @@ export default function Home() {
 	return (
 		<>
 			<Container mb={50}>
-				{/* <SequencingTable /> */}
 				<SimulationStep />
 				<Divider my="md" />
 				<FunctionalEvents />
@@ -242,27 +239,7 @@ export default function Home() {
 					</GridCol>
 				</Grid>
 				{endAnalysis && <SimulationResults />}
-				{sequenced && (
-					<Card mt={"lg"} shadow="sm"
-						padding="xl">
-						<h2>Sequencing at day {sequencingDay}</h2>
-
-						<BarChart
-							mt={"md"}
-							h={100}
-							data={dataPlotStacked}
-							tickLine="none"
-							gridAxis="none"
-							type="stacked"
-							orientation="vertical"
-							dataKey="name"
-							withYAxis={false}
-							series={series}
-							barProps={{ width: 20 }}
-						/>
-						<PopulationsHeatmap dataPlot={dataPlot} />
-					</Card>
-				)}
+				{sequenced && <SequencingSection />}
 			</Container>
 		</>
 	);

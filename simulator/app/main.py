@@ -113,6 +113,19 @@ def download_file():
     else:
         return {"error": "File not found"}, 404
     
+@app.route("/image_tree", methods=["GET"])
+def image_tree():
+    file_path = os.path.join(
+        "/data",
+        f"plot_tree_sequenced.png"
+    )
+    print(f"Open file: {file_path}")
+    
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return {"error": "File not found"}, 404
+    
 @app.route('/download_pdf', methods=['GET'])
 def download_pdf():
     frequence = request.args.get("frequence") if request.args.get("frequence") != '' else 'absolute'
@@ -136,16 +149,20 @@ def get_sequencing():
     numSeq = request.args.get("numSeq")
     try:
         subprocess.run(
-            ["Rscript", "/app/scripts/get_sequencing.R", "/data", numSeq],
+            ["Rscript", "/app/scripts/get_sequencing_wholemass.R", "/data", numSeq, "/data"],
             capture_output=True,
             text=True
         )
         
         with open("/data/seq_barplot_df.json", "r") as f:
-            data = json.load(f)
+            barplot = json.load(f)
+            
+        with open("/data/table_pops.json", "r") as f:
+            pops = json.load(f)
 
         return jsonify({
-            "stdout": data,
+            "barplot": barplot,
+            "pops": pops
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

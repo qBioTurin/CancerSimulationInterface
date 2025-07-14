@@ -1,11 +1,11 @@
 import { Box, Group } from "@mantine/core";
 import React from "react";
-import { colorsPicker } from "@/components/colors";
+import { colorMutTable, colorsPicker } from "@/components/colors";
 import { PlotData } from "@/components/interfaces";
 
 export default function PopulationsHeatmap({dataPlot}: {dataPlot: PlotData[]}) {
 	return (
-		<Group gap={2} wrap="wrap" w={"100%"} mt={"lg"}>
+		<Group gap={2} wrap="wrap" w={"100%"}>
 			{dataPlot.map((e, idx) => (
 				<React.Fragment key={idx}>
 					{Array.from({ length: e.nPop }).map((_, i) => (
@@ -13,7 +13,7 @@ export default function PopulationsHeatmap({dataPlot}: {dataPlot: PlotData[]}) {
 							key={i}
 							w={8}
 							h={8}
-							bg={colorsPicker[idx]}
+							bg={colorMutTable[idx]}
 							style={{ borderRadius: 1 }}
 						/>
 					))}

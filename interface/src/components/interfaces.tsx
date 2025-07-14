@@ -35,3 +35,12 @@ export interface PlotData {
     nCells: number;
     nPop: number;
 }
+
+export interface RowMutTable {
+	nmut: number;
+	pop_names: string[][];
+	fun_eff: string[][];
+	ncells: number[];
+	remaining?: number;
+	color?: string;
+}

@@ -2,7 +2,7 @@ import { ActionIcon, Box, Button, ButtonGroup, Grid, GridCol, Group, LoadingOver
 import { IconChevronDown, IconChevronUp, IconDownload, IconMinus, IconPlus } from "@tabler/icons-react"
 import Image from "next/image"
 import LabelledColorPicker from "./labelledColorPicker"
-import { colorsAddButtonIcon, colorsPage } from "./colors"
+import { colorMutTable, colorsAddButtonIcon, colorsPage, colorsPicker } from "./colors"
 import { useState } from "react"
 import { useSimulationPlotOptionsStore } from "@/lib/simulation-plot-options"
 import { LineChart } from "@mantine/charts"
@@ -10,6 +10,7 @@ import arrow_image from '@/assets/side_plot_show.png'
 import { useColorsLegendStore } from "@/lib/colors-legend-store"
 import { useSimulationStepStore } from "@/lib/simulation-step-store"
 import { useSequencingStore } from "@/lib/sequencing-store"
+import { RowMutTable } from "./interfaces"
 
 export default function SimulationResults() {
 	const [frequence, setFrequence] = useState('absolute')
@@ -22,7 +23,7 @@ export default function SimulationResults() {
 	const { depth, changingDepth, imageVersion, plotBase, plotExponent, updateDepth } = useSimulationPlotOptionsStore()
 	const { colors, changingColor } = useColorsLegendStore()
 	const { savingCheckpoints, endingTime } = useSimulationStepStore()
-	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay } = useSequencingStore()
+	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay, setDataTableMut, updatePlotVersion } = useSequencingStore()
 
 	async function downloadPDF() {
 		const response = await fetch(`/api/download_pdf?frequence=${frequence}`);
@@ -57,14 +58,21 @@ export default function SimulationResults() {
 		const result = await res2.json();
 		setLoadSequencing(false)
 		setSequenced(true)
-		const stdout = result.stdout;
-		const data: { nMut: number; nCells: number; nPop: number }[] = Object.keys(stdout.ncells).map((key) => ({
+		const barplot = result.barplot;
+		const data: { nMut: number; nCells: number; nPop: number }[] = Object.keys(barplot.ncells).map((key) => ({
 			nMut: parseInt(key),
-			nCells: stdout.ncells[key],
-			nPop: stdout.npop[key],
+			nCells: barplot.ncells[key],
+			nPop: barplot.npop[key],
 		}));
 		setDataPlot(data)
 
+		const table_pop: RowMutTable[] = result.pops;
+		const data_table = table_pop.map((p, index) => {
+			const max_val = Math.floor(10 / p.nmut)
+			return { nmut: p.nmut, pop_names: p.pop_names.slice(0, max_val), fun_eff: p.fun_eff.slice(0, max_val), ncells: p.ncells.slice(0, max_val), remaining: p.pop_names.length - max_val, color: colorMutTable[index] }
+		})
+
+		setDataTableMut(data_table)
 
 		const output = [
 			data.reduce(
@@ -78,15 +86,15 @@ export default function SimulationResults() {
 
 		const series = Object.keys(output[0])
 			.filter((key) => key !== 'name')
-			.map((key) => ({
+			.map((key, index) => ({
 				name: key,
-				color: 'red'
+				color: colorMutTable[index]
 			}));
 
 		setDataPlotStacked(output)
 		setSeries(series)
 		setSequencingDay(Math.floor(sliderValue / 100 * endingTime))
-
+		updatePlotVersion()
 	}
 
 	return (

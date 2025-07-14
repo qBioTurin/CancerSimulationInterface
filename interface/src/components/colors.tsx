@@ -12,6 +12,13 @@ export const colorsPage = {
 	lightDescription: "#afabab"
 }
 
+export const colorMutTable = [
+	"#646e78",
+	"#dcccbb",
+	"#8d98a7",
+	"#b5b2b1"
+]
+
 export const colorsPicker = [
 	"#188FA7",
 	"#82A24B",
