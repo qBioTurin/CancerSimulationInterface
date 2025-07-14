@@ -814,7 +814,8 @@ get_tree_plot_app<-function(df,palette){
                         mut=layout_df$name)%>%
       merge(mut_info%>%dplyr::select(mut,label,fun_eff,mut_generation))%>%
       group_by(mut_generation)%>%
-      mutate(n_mut_layer=n())
+      mutate(n_mut_layer=n())%>%
+      ungroup()
     
     size_label<-min(40/max(nodes_coord$n_mut_layer),6)
     x_lim<-range(nodes_coord$x)+c(-0.1,0.1)
@@ -823,15 +824,18 @@ get_tree_plot_app<-function(df,palette){
     if(sum(!is.na(unique(layout_df$y)))==1){
       plot<-ggplot()+
         geom_label(data=nodes_coord,
-                   aes(x=x,y=y,label=label,
-                       fill=fun_eff),
-                   color="white",
+                   aes(x=x,
+                       y=y,
+                       label=label,
+                       fill=fun_eff,
+                       color=fun_eff),
                    size=size_label,
                    label.r =unit(0.5,"lines"),
                    label.size = 0)+
         xlim(x_lim)+
         ylim(y_lim)+
         coord_fixed()+
+        scale_color_manual(values=rep("white",length(parameters@functional_effects)),na.value = "black")+
         scale_fill_manual(values=palette,na.value = "white")+
         theme_void()+
         theme(legend.position = "none")
@@ -874,15 +878,18 @@ get_tree_plot_app<-function(df,palette){
       geom_path(data=link,
                 aes(x=x,y=y,group=mut))+
       geom_label(data=nodes_coord,
-                 aes(x=x,y=y,label=label,
+                 aes(x=x,
+                     y=y,
+                     label=label,
+                     color=fun_eff,
                      fill=fun_eff),
-                 color="white",
                  size=size_label,
                  label.r =unit(0.5,"lines"),
                  label.size = 0)+
       xlim(x_lim)+
       ylim(y_lim)+
       coord_fixed()+
+      scale_color_manual(values=rep("white",length(parameters@functional_effects)),na.value = "black")+
       scale_fill_manual(values=palette,na.value = "white")+
       theme_void()+
       theme(legend.position = "none")
