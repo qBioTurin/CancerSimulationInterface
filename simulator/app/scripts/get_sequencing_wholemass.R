@@ -6,7 +6,7 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",2,"output")
+  args <- c("raw",40,"output")
 }
 path_in<-args[1]
 path_out<-args[3]
@@ -17,6 +17,8 @@ num_seq<-as.numeric(args[2])
 Nexp<-1
 
 load(paste(path_in,"/sim",Nexp,"/Zprovv",num_seq,".RData",sep=""))
+time_provv<-parameters@print_time[which.min(abs(time_provv-parameters@print_time))]
+
 
 pop<-lapply(Zprovv,Population)
 gen<-lapply(pop,genotype)

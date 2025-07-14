@@ -18,6 +18,7 @@ filenames <- list.files(paste(path,"/sim",Nexp,sep=""), full.names = FALSE)
 
 tumor<-lapply(filenames,function(filename){
   load(paste(path,"/sim",Nexp,"/",filename,sep=""))
+  time_provv<-parameters@print_time[which.min(abs(time_provv-parameters@print_time))]
   
   #name<-stringr::str_replace(filename,"Zprovv","")
   #name<-stringr::str_replace(name,".RData","")
@@ -101,3 +102,4 @@ json_data <- lapply(fun_eff_labels,
 write(toJSON(
   json_data
 ),paste(path,"/label_color.json",sep=""))
+

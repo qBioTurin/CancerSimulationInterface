@@ -6,7 +6,7 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",50,"output")
+  args <- c("raw",30,"output")
 }
 path_in<-args[1]
 path_out<-args[3]
@@ -20,6 +20,7 @@ Nexp<-1
 
 load(paste(path_in,"/sim",Nexp,"/Zprovv",num_seq,".RData",sep=""))
 
+time_provv<-parameters@print_time[which.min(abs(time_provv-parameters@print_time))]
 pop<-lapply(Zprovv,Population)
 Pop_ID<-1:length(pop)
 
@@ -148,18 +149,10 @@ Clones_df_seq<-Clones_df%>%
                mut=sapply(unique_mut_id,function(muts){muts[length(muts)]}),
                fun_eff=sapply(fun_eff_label,function(funcs){funcs[length(funcs)]})))%>%
   rowwise()%>%
-  mutate(Ncells_seq=round(min(y_upper,seq_max_y)-max(y_lower,seq_min_y)))%>%
-  dplyr::select(mut,Ncells_seq,fun_eff)%>%
-  mutate(ncells_post_PCR=pcr(Ncells_seq,10))%>%
+  mutate(Ncells_seq=round(min(y_upper,seq_max_y)-max(y_lower,seq_min_y)),
+         prob=Ncells_seq/(2*(seq_max_y-seq_min_y)))%>%
   ungroup()%>%
-  mutate(tot_ncells_post_PCR=sum(ncells_post_PCR))%>%
-  merge(tibble(clone=Pop_ID,mut=unique_mut_id,fun_eff=fun_eff_label))%>%
-  unnest(c(mut,fun_eff))%>%
-  group_by(mut,fun_eff)%>%
-  mutate(ncells=sum(ncells_post_PCR),
-         prob=ncells/(2*tot_ncells_post_PCR))%>%
-  dplyr::select(mut,fun_eff,ncells,prob)%>%
-  distinct()
+  dplyr::select(mut,fun_eff,Ncells_seq,prob)
 
 load("dens.RData")
 
@@ -172,7 +165,7 @@ vcf_sample<-Clones_df_seq%>%
   filter(sample_AD>0)%>%
   mutate(VAF=sample_AD/sample_DP)%>%
   merge(mut_names_tbl)%>%
-  dplyr::select(-c(prob,ncells,mut))%>%
+  dplyr::select(-c(prob,Ncells_seq,mut))%>%
   rename("mut"="names")
   
 
@@ -184,8 +177,8 @@ load(paste(path_in,"Clones_df_absolute.RData",sep="/"))
 range_plot_zoom_x<-unique(Clones_df_absolute$time)[which(sort(unique(Clones_df_absolute$time))==time_provv)+c(-1,1)]
 range_plot_zoom_y<-c(min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]),
                      max(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv]))
-xmin_rect<-time_provv-diff(range_plot_zoom)/50
-xmax_rect<-time_provv+diff(range_plot_zoom)/50
+xmin_rect<-time_provv-diff(range_plot_zoom_x)/50
+xmax_rect<-time_provv+diff(range_plot_zoom_x)/50
 y_trasl<-min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv])
 
 p<-plot_show_absolute+
