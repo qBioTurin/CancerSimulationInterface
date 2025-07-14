@@ -817,6 +817,8 @@ get_tree_plot_app<-function(df,palette){
       mutate(n_mut_layer=n())
     
     size_label<-min(40/max(nodes_coord$n_mut_layer),6)
+    x_lim<-range(nodes_coord$x)+c(-0.1,0.1)
+    y_lim<-range(nodes_coord$y)+c(-0.1,0.1)
     
     if(sum(!is.na(unique(layout_df$y)))==1){
       plot<-ggplot()+
