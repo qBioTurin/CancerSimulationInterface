@@ -14,6 +14,7 @@ if(interactive()){
 
 json_data <- fromJSON(file=args[1])
 path<-args[2]
+
 if(length(args)==2){
   runif(1)
   seed_selected<-as.integer(Sys.time())
