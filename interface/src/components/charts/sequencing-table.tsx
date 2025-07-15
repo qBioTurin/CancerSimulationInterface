@@ -1,5 +1,5 @@
 import { Badge, Box, Flex, Grid, GridCol, Text } from "@mantine/core";
-import { colors, colorsAddButton, colorsPage } from "../colors";
+import { colors, colorsAddButton } from "../colors";
 import React from "react";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import { useFunctionalEventsStore } from "@/lib/functional-events-store";
@@ -15,14 +15,15 @@ export default function SequencingTable() {
 				Composition of the mass
 			</Text>
 			<Grid columns={24}>
-				<GridCol offset={3} span={10}>
+				<GridCol offset={3} span={13}>
 					<Text ta="center" >Populations</Text>
 				</GridCol>
-				<GridCol style={{ borderLeft: "2px solid" }} span={10}>
+				<GridCol style={{ borderLeft: "2px solid" }} span={8}>
 					<Text ta="center">Number of Cells</Text>
 				</GridCol>
 			</Grid>
 			{dataTableMut.map((row, index) => {
+				if (index > 4) { return }
 				return (
 					<Grid key={index} columns={24}>
 						<GridCol span={2} py={"lg"}>
@@ -36,7 +37,7 @@ export default function SequencingTable() {
 								}}
 							/>
 						</GridCol>
-						<GridCol style={{ borderTop: "2px solid" }} offset={1} span={10}>
+						<GridCol style={{ borderTop: "2px solid" }} offset={1} span={13}>
 							{row.pop_names.map((pop_n, i) => (
 								<React.Fragment key={i}>
 									{pop_n.length > 1 && (
@@ -63,7 +64,7 @@ export default function SequencingTable() {
 							))}
 							{row.remaining! > 0 && (<Text c={"gray"}>...{row.remaining} more</Text>)}
 						</GridCol>
-						<GridCol style={{ borderLeft: "2px solid", borderTop: "2px solid" }} span={10}>
+						<GridCol style={{ borderLeft: "2px solid", borderTop: "2px solid" }} span={8}>
 							{row.ncells.map((n, i) => (
 								<React.Fragment key={i}>
 									<Badge mr={"xs"} autoContrast color={colorsAddButton}>{n}</Badge>

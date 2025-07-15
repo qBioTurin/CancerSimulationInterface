@@ -13,10 +13,11 @@ export const colorsPage = {
 }
 
 export const colorMutTable = [
-	"#646e78",
-	"#dcccbb",
-	"#8d98a7",
-	"#b5b2b1"
+	"#dbcbcb",
+	"#afa799",
+	"#84757f",
+	"#626772",
+	"#394740"
 ]
 
 export const colorsPicker = [

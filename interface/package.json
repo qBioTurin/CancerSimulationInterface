@@ -19,6 +19,7 @@
     "plotly.js": "^3.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-inner-image-zoom": "^4.0.1",
     "react-plotly.js": "^2.6.0",
     "recharts": "^2.15.4",
     "zustand": "^5.0.5"
@@ -27,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-inner-image-zoom": "^3.0.3",
     "typescript": "^5"
   }
 }

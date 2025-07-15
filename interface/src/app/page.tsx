@@ -30,6 +30,7 @@ export default function Home() {
 
 	const { depth, updateImageVersion, setPlotBase, setPlotExponent, updateChangingDepth } = useSimulationPlotOptionsStore()
 	const { seed } = useSimulationStepStore()
+	const { subsampled, setVCFObjects, numSeq, updateSubsampleVersion, setFirstSubsampled, setSubsampled } = useSequencingStore()
 
 
 	function addColorsStarting(_colors: { color: string, label: string }[]) {
@@ -91,6 +92,8 @@ export default function Home() {
 					'Content-Type': 'application/json',
 				},
 			})
+			setSubsampled(false)
+			setFirstSubsampled(true)
 			const proxyResponsePromise = fetch(`/api/proxy?seed=${seed ?? ''}`, {
 				method: 'POST',
 				headers: {
@@ -195,6 +198,18 @@ export default function Home() {
 					image: parseColors()
 				}),
 			});
+
+			if (subsampled) {
+				const subsample = await fetch(`/api/get_sequencing_subsample?numSeq=${numSeq}&first=false&color=true`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					}
+				})
+				const data = await subsample.json();
+				setVCFObjects(data['data'])
+				updateSubsampleVersion()
+			}
 
 			updateImageVersion()
 			setEndAnalysis(true);

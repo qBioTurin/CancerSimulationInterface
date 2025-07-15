@@ -4,31 +4,43 @@ import PopulationsHeatmap from "./charts/populations-heatmap";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import Image from "next/image";
 import SequencingTable from "./charts/sequencing-table";
-import { colorsPage, colorsRunButton } from "./colors";
+import { colorsAddButtonIcon, colorsPage, colorsRunButton } from "./colors";
 import { useState } from "react";
 import VCFTable from "./vcf-table";
+import InnerImageZoom from "react-inner-image-zoom";
+import 'react-inner-image-zoom/lib/styles.min.css';
 
 export default function SequencingSection() {
-	const { dataPlot, dataPlotStacked, series, sequencingDay, plotVersion, numSeq, updateSubsampleVersion, subsampleVersion, setVCFObjects } = useSequencingStore()
+	const { dataPlot, dataPlotStacked, series, sequencingDay, firstSubsampled, plotVersion, numSeq, updateSubsampleVersion, setFirstSubsampled, subsampleVersion, setVCFObjects, subsampled, setSubsampled } = useSequencingStore()
 	const [colored, setColored] = useState(false);
-	const [subsample, setSubsample] = useState(false)
 	const [loading, setLoading] = useState(false)
 
 	const sequencingSubsample = async () => {
-		setSubsample(false)
+		setSubsampled(false)
 		setLoading(true)
-		const subsample = await fetch(`/api/get_sequencing_subsample?numSeq=${numSeq}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		})
+		var subsample: any
+		if (firstSubsampled) {
+			subsample = await fetch(`/api/get_sequencing_subsample?numSeq=${numSeq}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			})
+		} else {
+			subsample = await fetch(`/api/get_sequencing_subsample?numSeq=${numSeq}&first=false`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			})
+		}
 
 		const data = await subsample.json();
 		setVCFObjects(data['data'])
-		setSubsample(true)
-		setLoading(false)
 		updateSubsampleVersion()
+		setSubsampled(true)
+		setLoading(false)
+		setFirstSubsampled(false)
 	}
 
 	return (
@@ -66,40 +78,44 @@ export default function SequencingSection() {
 						<Text>
 							Evolutionary tree
 						</Text>
-						<Image
-							key={plotVersion}
+						<InnerImageZoom
 							src={`/api/image_tree?v=${plotVersion}`}
-							alt="Tree"
-							height={350}
+							zoomSrc={`/api/image_tree?v=${plotVersion}`}
 							width={400}
+							height={350}
+							zoomType="hover"
+							zoomPreload={true}
 						/>
 					</Stack>
 					<Stack>
-						<Grid>
-							<GridCol span={7}>
+						<Grid align="center">
+							<GridCol span={6}>
 								<Text>
 									Variant prevalence histogram
 								</Text>
 							</GridCol>
-							<GridCol span={2}>
+							<GridCol span={"auto"}>
 								<Switch
+									color={colorsAddButtonIcon}
 									checked={colored}
 									onChange={(event) => setColored(event.currentTarget.checked)}
 								/>
 							</GridCol>
 						</Grid>
-						<Image
+						<InnerImageZoom
 							src={`/api/histogram?colored=${colored}&v=${plotVersion}`}
-							alt="Tree"
-							height={350}
+							zoomSrc={`/api/histogram?colored=${colored}&v=${plotVersion}`}
 							width={400}
+							height={350}
+							zoomType="hover"
+							zoomPreload={true}
 						/>
 					</Stack>
 				</SimpleGrid>
 				<Group justify="center" mt={"xl"}>
 					<Button onClick={sequencingSubsample} loading={loading} color={colorsRunButton}>Randomly subsample</Button>
 				</Group>
-				{subsample && !loading && (
+				{subsampled && !loading && (
 					<Grid mt={"lg"} justify="center" align="center">
 						<GridCol span={6}>
 							<Image

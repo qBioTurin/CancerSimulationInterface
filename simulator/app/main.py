@@ -179,14 +179,20 @@ def get_sequencing():
 @app.route("/get_sequencing_subsample", methods=["GET"])
 def get_sequencing_subsample():
     numSeq = request.args.get("numSeq")
+    first = request.args.get("first")
+    color = request.args.get("color")
     try:
-        subprocess.run(
+        if(first != 'false'):
+           subprocess.run(
             ["Rscript", "/app/scripts/get_sequencing_subsample.R", "/data", numSeq, "/data"],
             capture_output=True,
             text=True
-        )
+           )
+           
+        color = 'TRUE' if color == 'true' else "FALSE"
+        
         subprocess.run(
-            ["Rscript", "/app/scripts/redo_get_sequencing_subsample.R", "/data", numSeq, "/data"],
+            ["Rscript", "/app/scripts/redo_get_sequencing_subsample.R", "/data", numSeq, "/data", "/data/labeled_colors.json", color],
             capture_output=True,
             text=True
         )

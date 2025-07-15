@@ -23,7 +23,7 @@ export default function SimulationResults() {
 	const { depth, changingDepth, imageVersion, plotBase, plotExponent, updateDepth } = useSimulationPlotOptionsStore()
 	const { colors, changingColor } = useColorsLegendStore()
 	const { savingCheckpoints, endingTime } = useSimulationStepStore()
-	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay, setDataTableMut, setNumSeq, updatePlotVersion } = useSequencingStore()
+	const { setSequenced, setDataPlot, setDataPlotStacked, setSeries, setSequencingDay, setFirstSubsampled, setDataTableMut, setNumSeq, updatePlotVersion, setSubsampled } = useSequencingStore()
 
 	async function downloadPDF() {
 		const response = await fetch(`/api/download_pdf?frequence=${frequence}`);
@@ -47,6 +47,8 @@ export default function SimulationResults() {
 
 	async function getSequencing() {
 		setLoadSequencing(true)
+		setSubsampled(false)
+		setFirstSubsampled(true)
 		const numSeq = sliderValue * savingCheckpoints / 100
 		const res2 = await fetch(`/api/get_sequencing?numSeq=${numSeq}`, {
 			method: 'GET',
