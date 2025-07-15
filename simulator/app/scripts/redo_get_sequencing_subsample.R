@@ -6,13 +6,27 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",42,"output")
+  args <- c("raw",42,"output","raw/label_color.json",FALSE)
 }
 path_in<-args[1]
 path_out<-args[3]
+json_palette_file<-args[4]
+json_palette<-fromJSON(file=json_palette_file)
+palette<-sapply(json_palette,function(el){el$color})
+names(palette)<-sapply(json_palette,function(el){el$label})
+
+if(args[5]){
+  seed_selected<- as.numeric(read.table(paste(path_in,"/seed_seq.txt",sep="")))
+}else{
+  runif(1)
+  seed_selected<-as.integer(Sys.time())
+  write(seed_selected,file=paste(path_in,"/seed_seq.txt",sep=""))
+}
+set.seed(seed_selected)
 
 load(paste(path_in,"/Parameters.RData",sep=""))
 load(paste(path_in,"mut_names_tbl.RData",sep="/"))
+
 
 num_seq<-as.numeric(args[2])
 Nexp<-1
@@ -83,6 +97,7 @@ y_trasl<-min(Clones_df_absolute$y_lower[Clones_df_absolute$time==time_provv])
 p<-plot_show_absolute+
   coord_cartesian(xlim =range_plot_zoom_x,
                   ylim = range_plot_zoom_y)+
+  scale_fill_manual(values=palette)+
   geom_vline(xintercept = time_provv,color="white",alpha=0.4)+
   geom_rect(aes(xmin = xmin_rect,
                 xmax = xmax_rect,
