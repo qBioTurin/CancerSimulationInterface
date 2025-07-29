@@ -122,5 +122,4 @@ save(list=c("parameters",
             "mut_names"),
      file = paste(path,"/Parameters.RData",sep="")
      )
-#rm(list=ls())
 
