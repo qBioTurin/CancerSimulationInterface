@@ -16,7 +16,13 @@ load(paste(path_in,"/obs_tumor.RData",sep=""))
 load(paste(path_in,"/Parameters.RData",sep=""))
 json_palette<-fromJSON(file=json_palette_file)
 palette<-sapply(json_palette,function(el){el$color})
+
+if(all(palette=="")){
+    hues <- seq(0, 360, length.out = length(palette) + 1)[-1]  
+    palette <- hsv(h = hues / 360, s = 0.7, v = 0.9)  
+}
 names(palette)<-sapply(json_palette,function(el){el$label})
+
 
 Clones_df_absolute<-get_muller_plot_info(obs_Pop_ID = obs_tumor$obs_Pop_ID,
                      obs_tumor_tibble = obs_tumor$obs_tumor_tibble,

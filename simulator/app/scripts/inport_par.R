@@ -85,7 +85,9 @@ att_weights  <- sapply(alpha_complete, function(a) a[2])
 vuln <- binary_mat %*% diag(vuln_weights)
 att  <- binary_mat %*% diag(att_weights)  
 
-Competition<-matrix(0,L,L)
+if(I==0){
+  Competition<-matrix(1,L,L)
+}else{Competition<-matrix(0,L,L)
 for(i in 1:L){
   for(j in 1:L){
     i_vec <- binary_mat[i, ]
@@ -95,7 +97,7 @@ for(i in 1:L){
     Competition[i, j] <- sum(vuln_weights[i_notin_j_idx] - 1) +
       sum(att_weights[j_notin_i_idx] - 1) + 1
   }
-}
+}}
 
 K<-rep(K_base,L)
 if(length(k)>0){
