@@ -1,14 +1,3 @@
-source("scripts/libraries.R")
-source("scripts/Utils.R")
-
-
-args<-commandArgs(trailingOnly = TRUE)
-if(interactive()){
-  args <- c("params.json","raw")
-}
-json_data <- fromJSON(file=args[1])
-path<-args[2]
-
 length_panel<-json_data$mutableBases
 K_base<-json_data$carryingCapacity
 tmax<-json_data$endingTime
@@ -133,5 +122,5 @@ save(list=c("parameters",
             "mut_names"),
      file = paste(path,"/Parameters.RData",sep="")
      )
-rm(list=ls())
+#rm(list=ls())
 

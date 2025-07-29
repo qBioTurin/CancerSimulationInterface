@@ -1,33 +1,53 @@
 source("scripts/install_libraries.R")
 source("scripts/libraries.R")
-source("scripts/inport_par.R")
 source("scripts/Utils.R")
 source("scripts/Population.R")
 source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 source("scripts/Simulazioni_fenotipo_classi.R")
 
-args<-commandArgs(trailingOnly = TRUE)
-if(interactive()){
-  args <- c("params.json","raw")
-}
+option_list<-list(
+  make_option(
+    c("--seed"),
+    type="integer",
+    default = as.integer(Sys.time()),
+    help = "Seed for the first simulation"
+  ),
+  make_option(
+    c("--Nexp"),
+    type="integer",
+    default = 1,
+    help = "simulation number"
+  ),
+  make_option(
+    c("--params"),
+    type="character",
+    default = "params.json",
+    help = "json file with parameters"
+  ),
+  make_option(
+    c("--dir"),
+    type="character",
+    default = "raw",
+    help = "directory for the files"
+  )
+)
 
-json_data <- fromJSON(file=args[1])
-path<-args[2]
+opt_parser<-OptionParser(option_list = option_list)
+opt<-parse_args(opt_parser)
 
-if(length(args)==2){
-  runif(1)
-  seed_selected<-as.integer(Sys.time())
-}else{
-  seed_selected<- args[3]
-}
-write(seed_selected,file=paste(path,"/seed.txt",sep=""))
+json_data <- fromJSON(file=opt$params)
+path<-opt$dir
 
+source("scripts/inport_par.R")
 load(paste(path,"/Parameters.RData",sep=""))
-Nexp<-1
+
+write(opt$seed,file=paste(path,"/seed.txt",sep=""))
+
+Nexp<-opt$Nexp
 
 simulazione(Nexp=Nexp,
-            seed=seed_selected,
+            seed=opt$seed,
             path = path,
             starting_gen = starting_gen,
             starting_fun_eff=starting_fun_eff,
