@@ -22,15 +22,9 @@ option_list<-list(
   make_option(
     c("--params_RData"),
     type="character",
-    default = "Parameters.RData",
+    default = "raw/Parameters.RData",
     help = "RData file created by import_par_slurm"
-  ),
-  make_option(
-    c("--input_dir"),
-    type="character",
-    default = "raw",
-    help = "directory for the files in input and the seed"
-  ),
+  )
   make_option(
     c("--output_dir"),
     type="character",
@@ -41,15 +35,10 @@ option_list<-list(
 
 opt_parser<-OptionParser(option_list = option_list)
 opt<-parse_args(opt_parser)
-
-path_in<-opt$input_dir
 path_out<-opt$output_dir
-
-params_RData<-opt$params_RData
-
-load(paste(path_in,"/Parameters.RData",sep=""))
-
 Nexp<-opt$Nexp
+
+load(opt$params_RData)
 
 simulazione(Nexp=Nexp,
             seed=opt$seed,
