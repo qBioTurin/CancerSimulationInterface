@@ -24,7 +24,7 @@ option_list<-list(
     type="character",
     default = "raw/Parameters.RData",
     help = "RData file created by import_par_slurm"
-  )
+  ),
   make_option(
     c("--output_dir"),
     type="character",
