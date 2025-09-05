@@ -90,7 +90,7 @@ simulazione<-function(Nexp,seed,path,starting_gen,starting_fun_eff,Ncells_start,
                        MoreArgs =list(local_params),SIMPLIFY = TRUE)%>%unlist()
         
         time_provv<-time_provv+local_params@Delta*parameters@av_lifespan
-        print(time_provv)
+
         if(length(Zprovv)==0||sum(sapply(Zprovv,Ncells))==0){
           check_cond_end<-FALSE
         }else if(is.null(tmax)&!is.null(Ncellsmax)){
@@ -98,6 +98,7 @@ simulazione<-function(Nexp,seed,path,starting_gen,starting_fun_eff,Ncells_start,
           }else{
             check_cond_end<-(time_provv<tmax)
           }
+        
         if(time_provv>=parameters@print_time[count+1]){
           count<-count+1
           print(time_provv)
