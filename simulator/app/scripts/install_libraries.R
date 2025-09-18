@@ -12,4 +12,4 @@ if (!require("latex2exp")) install.packages("latex2exp",repos = "https://cloud.r
 if (!require("igraph")) install.packages("igraph",repos = "https://cloud.r-project.org")
 if (!require("ggraph")) install.packages("ggraph",repos = "https://cloud.r-project.org")
 if (!require("scales")) install.packages("scales",repos = "https://cloud.r-project.org")
-if (!require("matrixStats")) install.packages("scales",repos = "https://cloud.r-project.org")
+if (!require("matrixStats")) install.packages("matrixStats",repos = "https://cloud.r-project.org")
