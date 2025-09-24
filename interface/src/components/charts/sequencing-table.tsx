@@ -3,6 +3,7 @@ import { colors, colorsAddButton } from "../colors";
 import React from "react";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import { useFunctionalEventsStore } from "@/lib/functional-events-store";
+import InputLabel from "../input-label";
 
 export default function SequencingTable() {
 
@@ -11,9 +12,7 @@ export default function SequencingTable() {
 
 	return (
 		<>
-			<Text>
-				Composition of the mass
-			</Text>
+			<InputLabel size="md" fw={400} label="Composition of the mass" tooltip="Populations present at sequencing time are subdivided in rows based on the number of accumulated mutations each." />
 			<Grid columns={24}>
 				<GridCol offset={3} span={13}>
 					<Text ta="center" >Populations</Text>
@@ -23,7 +22,6 @@ export default function SequencingTable() {
 				</GridCol>
 			</Grid>
 			{dataTableMut.map((row, index) => {
-				if (index > 4) { return }
 				return (
 					<Grid key={index} columns={24}>
 						<GridCol span={2} py={"lg"}>

@@ -128,9 +128,11 @@ export function parseJson() {
 
 	const {
 		mutations,
-		populations
+		populations,
+		resetMutationDict
 	} = useStartingConditionsStore.getState();
 
+	resetMutationDict()
 	const tree = renameTreeNodes(generateTree((populations.map(p => new Set(p.mutations)))))
 
 	const { mutationDict } = useStartingConditionsStore.getState()
@@ -140,7 +142,7 @@ export function parseJson() {
 	const numCells: number[] = []
 
 	try {
-		populations.filter(p => p.mutations.length > 0).map((p) => {
+		populations.map((p) => {
 			genotype.push(p.mutations.map(m => findDataByKey(tree, m)))
 			phenotype.push(p.mutations.map(m => mutations.filter(m1 => m1.name === m)[0].event))
 			numCells.push(p.numberOfCells)

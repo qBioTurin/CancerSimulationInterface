@@ -54,14 +54,16 @@ Use the interface to add as many initial populations as needed. The simulator wi
 											<PopulationCombobox population={population} />
 										</GridCol>
 										<GridCol span={3}>
-											<NumberInput onChange={(val) => updatePopulationNumberCells(population, Number(val))} defaultValue={population.numberOfCells} label="Number of cells" hideControls />
+											<NumberInput allowDecimal={false} allowNegative={false} min={1} onChange={(val) => updatePopulationNumberCells(population, Number(val))} defaultValue={population.numberOfCells} label="Number of cells" hideControls />
 										</GridCol>
 										<GridCol span={2}>
-											<ActionIcon onClick={() => {
-												removePopulation(population)
-											}} autoContrast aria-label="Settings" radius={"xl"} color={colorsAddButton}>
-												<IconMinus style={{ width: '70%', height: '70%', color: colorsAddButtonIcon }} stroke={1.5} />
-											</ActionIcon>
+											{populations.length > 1 &&
+												<ActionIcon onClick={() => {
+													removePopulation(population)
+												}} autoContrast aria-label="Settings" radius={"xl"} color={colorsAddButton}>
+													<IconMinus style={{ width: '70%', height: '70%', color: colorsAddButtonIcon }} stroke={1.5} />
+												</ActionIcon>
+											}
 										</GridCol>
 									</Grid>
 								)

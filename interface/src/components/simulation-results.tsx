@@ -84,7 +84,7 @@ export default function SimulationResults() {
 					acc[item.nMut.toString()] = item.nCells;
 					return acc;
 				},
-				{ name: 'mut' } as Record<string, number | string>
+				{ name: 'Number of mutations' } as Record<string, number | string>
 			)
 		];
 

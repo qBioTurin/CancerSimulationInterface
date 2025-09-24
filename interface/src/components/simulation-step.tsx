@@ -86,6 +86,7 @@ export default function SimulationStep() {
 							value={input.value}
 							hideControls
 							onChange={(val) => input.onChange(Number(val))}
+							allowNegative={false}
 						/>
 					</GridCol>
 				))}
@@ -108,6 +109,8 @@ export default function SimulationStep() {
 										value={input.value}
 										hideControls
 										onChange={(val) => input.onChange(Number(val))}
+										allowNegative={false}
+										allowDecimal={false}
 									/>
 								</GridCol>
 							))}

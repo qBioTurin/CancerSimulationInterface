@@ -187,7 +187,7 @@ export default function FunctionalEvents() {
 											<Badge color={colors[event.type]} size="xl" >{event.name}</Badge>
 										</Center>
 										<Center>
-											<NumberInput value={event.frequency} w={100} onChange={(value) => updateEventFrequency(event, Number(value))} hideControls />
+											<NumberInput value={event.frequency} w={100} onChange={(value) => updateEventFrequency(event, Number(value))} hideControls allowNegative={false} />
 										</Center>
 									</div>
 									{functionalEvents.length > index + 1 && (

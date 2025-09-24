@@ -17,6 +17,7 @@ import { useSimulationPlotOptionsStore } from "@/lib/simulation-plot-options";
 import { useSequencingStore } from "@/lib/sequencing-store";
 import SimulationResults from "@/components/simulation-results";
 import SequencingSection from "@/components/sequencing-section";
+import { useFunctionalEventsStore } from "@/lib/functional-events-store";
 
 export default function Home() {
 	const [endAnalysis, setEndAnalysis] = useState(false)
@@ -25,12 +26,14 @@ export default function Home() {
 	// const [error, setError] = useState(false)
 	const [percentage, setPercentage] = useState(0)
 
-	const { addColor, resetColors, changeColor, updateChangingColor } = useColorsLegendStore()
+	const { colors, addColor, resetColors, changeColor, updateChangingColor } = useColorsLegendStore()
 	const { sequenced, setSequenced } = useSequencingStore()
 
 	const { depth, updateImageVersion, setPlotBase, setPlotExponent, updateChangingDepth } = useSimulationPlotOptionsStore()
 	const { seed } = useSimulationStepStore()
 	const { subsampled, setVCFObjects, numSeq, updateSubsampleVersion, setFirstSubsampled, setSubsampled } = useSequencingStore()
+	const { isDifferentName } = useFunctionalEventsStore()
+	const { isDifferentGenotype } = useStartingConditionsStore()
 
 
 	function addColorsStarting(_colors: { color: string, label: string }[]) {
@@ -65,7 +68,7 @@ export default function Home() {
 					await new Promise(resolve => setTimeout(resolve, 1000))
 				}
 			} catch (e) {
-				console.error("Errore durante il polling:", e)
+				console.error("Polling Error:", e)
 				await new Promise(resolve => setTimeout(resolve, 2000))
 			}
 		}
@@ -77,6 +80,22 @@ export default function Home() {
 			notifications.show({
 				title: 'Error in starting populations',
 				message: 'You should have at least one population',
+				color: 'red'
+			})
+			return
+		}
+		if (!isDifferentName()) {
+			notifications.show({
+				title: 'Error in functional effects',
+				message: 'The name of the effects should be different',
+				color: 'red'
+			})
+			return
+		}
+		if (!isDifferentGenotype()) {
+			notifications.show({
+				title: 'Error in starting populations',
+				message: 'The genotype should be different',
 				color: 'red'
 			})
 			return
@@ -159,7 +178,9 @@ export default function Home() {
 				}),
 			});
 
-			addColorsStarting((await res.json())['stdout'])
+			const _colors: { color: string, label: string }[] = (await res.json())['stdout']
+			const usedLabels = new Set(colors.map(c => c.label));
+			_colors.filter(c => !usedLabels.has(c.label)).map((c, i) => addColor({ label: c.label, color: colorsPicker[i % 20] }))
 
 			await fetch('/api/draw_plot', {
 				method: 'POST',

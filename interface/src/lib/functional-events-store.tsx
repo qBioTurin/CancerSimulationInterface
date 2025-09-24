@@ -13,6 +13,7 @@ interface FunctionalEvents {
 	updateEventParam: (functionalEvents: Event, paramName: string, value: number) => void;
 	updateNextFunctionalEventId: () => void;
 	getEffectByName: (name: string) => string;
+	isDifferentName: () => boolean;
 }
 
 export const useFunctionalEventsStore = create<FunctionalEvents>((set, get) => ({
@@ -63,8 +64,12 @@ export const useFunctionalEventsStore = create<FunctionalEvents>((set, get) => (
 		set((state) => ({
 			nextFunctionalEventId: state.nextFunctionalEventId + 1,
 		})),
-
 	getEffectByName: (name) =>
 		get().functionalEvents.find((event) => event.name === name)?.type || "",
-
+	isDifferentName: () => {
+		const events = get().functionalEvents;
+		const names = events.map(e => e.name);
+		const nameSet = new Set(names);
+		return names.length === nameSet.size;
+	}
 }));

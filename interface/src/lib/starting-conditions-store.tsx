@@ -25,9 +25,11 @@ interface StartingConditions {
 	removePopulation: (population: Population) => void;
 
 	addMutationToDict: (key: string, val: string) => void;
+	resetMutationDict: () => void;
+	isDifferentGenotype: () => boolean;
 }
 
-export const useStartingConditionsStore = create<StartingConditions>((set) => ({
+export const useStartingConditionsStore = create<StartingConditions>((set, get) => ({
 	startingNumberOfCells: defaultStartingConditions,
 
 	mutations: [{ name: "Mut1", event: 1 }],
@@ -100,4 +102,18 @@ export const useStartingConditionsStore = create<StartingConditions>((set) => ({
 		set((state) => ({
 			mutationDict: { ...state.mutationDict, [key]: val }
 		})),
+	resetMutationDict: () => set({mutationDict: {}}),
+	isDifferentGenotype: () => {
+		const populations = get().populations;
+		const seen = new Set();
+		for (const pop of populations) {
+			const mutationsKey = [...pop.mutations].sort().join(',');
+			if (seen.has(mutationsKey)) {
+				return false;
+			}
+			seen.add(mutationsKey);
+		}
+
+		return true;
+	}
 }));

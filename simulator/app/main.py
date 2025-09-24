@@ -30,13 +30,13 @@ def run_r_script():
 
         if seed == '' :
            subprocess.run(
-            ["Rscript", "/app/scripts/run_simulation.R", "/data/params.json", "/data"],
+            ["Rscript", "/app/scripts/run_simulation.R", "--params", "/data/params.json", "--dir", "/data"],
             capture_output=True,
             text=True
         )
         else:
            subprocess.run(
-            ["Rscript", "/app/scripts/run_simulation.R", "/data/params.json", "/data", seed],
+            ["Rscript", "/app/scripts/run_simulation.R", "--params", "/data/params.json", "--dir", "/data", "--seed", seed],
             capture_output=True,
             text=True
         )
@@ -100,7 +100,7 @@ def check_percentage():
 
         num_files = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
 
-        percentage = (num_files / total_expected) * 100
+        percentage = (num_files / (total_expected+1)) * 100
 
         return jsonify({
             "stdout": f"{percentage:.2f}%"
