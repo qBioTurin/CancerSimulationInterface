@@ -6,7 +6,7 @@ source("scripts/Population_with_size_nmut.R")
 
 args<-commandArgs(trailingOnly = TRUE)
 if(interactive()){
-  args <- c("raw",7,"output","raw/label_color.json",FALSE)
+  args <- c("raw",195,"output","raw/label_color.json",FALSE)
 }
 path_in<-args[1]
 path_out<-args[3]

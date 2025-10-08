@@ -71,7 +71,7 @@ ggsave(plot_download_absolute,device = "pdf",
        path = path_out,
        width = 9,height = 5,
        filename="plot_download_absolute.pdf")
-
+plot_download_absolute
 plot_download_relative<-get_muller_plot_download(Clones_df = Clones_df_relative,
                                                  freq = TRUE,
                                                  palette = palette)
