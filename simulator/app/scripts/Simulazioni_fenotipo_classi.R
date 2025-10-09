@@ -100,15 +100,13 @@ simulazione<-function(Nexp,seed,path,starting_gen,starting_fun_eff,Ncells_start,
           }
         
         if(time_provv>=parameters@print_time[count+1]){
-          count<-count+1
-          print(time_provv)
           save(list = c("Zprovv","time_provv"),
                file=paste(path_sim,"/Zprovv",count,".RData",sep=""))
+          count<-count+1
+          print(time_provv)
         }
       }
     }
-    save(list = c("Zprovv","time_provv"),
-         file=paste(path_sim,"/Zprovv",count,".RData",sep=""))
     },
   error=function(cond) {
     write.table(paste(conditionMessage(cond),"\n",seed),

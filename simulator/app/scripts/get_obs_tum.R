@@ -50,7 +50,7 @@ obs_tumor_tibble_timefix<-lapply(1:length(tumor),function(count){
     Ncells=0)
   for(pop_w_s_nmut in tum_time_fix){
     pop<-Population(pop_w_s_nmut)
-    Ncells<-Ncells(pop_w_s_nmut)
+    ncells<-Ncells(pop_w_s_nmut)
     desc<-sapply(obs_pop,
                  is_descendant,
                  Population_younger=pop)
@@ -59,7 +59,7 @@ obs_tumor_tibble_timefix<-lapply(1:length(tumor),function(count){
                                    how_old_descendant,
                                    Population_younger=pop))
     
-    obs_tumor_tibble$Ncells[obs_tumor_tibble$Population_ID==which_assign]<-obs_tumor_tibble$Ncells[obs_tumor_tibble$Population_ID==which_assign]+Ncells
+    obs_tumor_tibble$Ncells[obs_tumor_tibble$Population_ID==which_assign]<-obs_tumor_tibble$Ncells[obs_tumor_tibble$Population_ID==which_assign]+ncells
   }
   return(obs_tumor_tibble%>%filter(Ncells>0))
 }
