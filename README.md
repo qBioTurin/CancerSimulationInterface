@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: sentence
----
-
 # InSiTE (In Silico Tumor Evolution):
 
 ## An R-based simulator providing insight into clonal dynamics
