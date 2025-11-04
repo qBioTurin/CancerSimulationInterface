@@ -19,32 +19,34 @@ New mutations arise as a doubly stochastic Poisson process, with rates modulated
 Once the events and initial conditions are defined, the simulator runs and outputs cell counts for each subpopulation over a fixed number of timesteps. Results can be downloaded or visualized in the web interface through Muller plots and clonal tree plots.\
 The simulator can also generate synthetic sequencing data: at any timepoint, a subset of cells can be sampled, their mutations distributed across reads, randomly amplified, and subsampled to mimic sequencing coverage. This produces a synthetic VCF file ready for downstream analysis.
 
-# Authors
-
--   [\@DanielaVolpatto](https://github.com/DanielaVolpatto)
-
--   [\@Gepiro](https://github.com/Gepiro)
-
 ## Demo
 
 ![Demo](assets/App_DEMO.gif)
 
 ## Documentation
 
-[Documentation](https://linktodocumentation)
-
 ## Installation
 
-Install my-project with npm
+Clone the git with
 
 ``` bash
-  npm install my-project
-  cd my-project
+  git clone git@github.com:qBioTurin/CancerSimulationInterface.git
+  cd CancerSimulationInterface
 ```
 
-## License
+Then run the Docker, based on your operative system:
 
-[MIT](https://choosealicense.com/licenses/mit/)
+MacOS/Linux
+
+``` bash
+ docker compose up --build
+```
+
+Windows
+
+``` bash
+ docker-compose up --build
+```
 
 ## Support
 
@@ -57,3 +59,9 @@ For support, email [fake\@fake.com](mailto:fake@fake.com){.email} or join our Sl
 Add badges from somewhere like: [shields.io](https://shields.io/)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/) [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/) [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
+
+# Authors
+
+-   [\@DanielaVolpatto](https://github.com/DanielaVolpatto)
+
+-   [\@Gepiro](https://github.com/Gepiro)
