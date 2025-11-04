@@ -100,7 +100,7 @@ def check_percentage():
 
         num_files = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
 
-        percentage = (num_files / (total_expected+1)) * 100
+        percentage = (num_files / (total_expected)) * 100
 
         return jsonify({
             "stdout": f"{percentage:.2f}%"
