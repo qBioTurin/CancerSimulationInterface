@@ -4,14 +4,49 @@ source("scripts/Population.R")
 source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 
-args<-commandArgs(trailingOnly = TRUE)
-if(interactive()){
-  args <- c("raw",195,"output","raw/label_color.json",FALSE)
-}
-path_in<-args[1]
-path_out<-args[3]
+option_list<-list(
+  make_option(
+    c("--path_in"),
+    type="character",
+    default = "raw",
+    help = "path to the folder in which the get_sequencing_subsample.R output is stored"
+  ),
+  make_option(
+    c("--num_seq"),
+    type="numeric",
+    default = 1,
+    help = "simulation step to be sequenced"
+  ),
+  make_option(
+    c("--path_out"),
+    type="character",
+    default = "output",
+    help = "path to the folder in which the plot and vcf is going to be saved"
+  ),
+  make_option(
+    c("--json_palette_file"),
+    type="character",
+    default = "raw/label_color.json",
+    help = "json file with colors for populations (path)"
+  ),
+  make_option(
+    c("--retrieve_seed"),
+    type="logical",
+    default = FALSE,
+    help = "Has the seed for the sequencing already been created?"
+  )
+)
 
-if(as.logical(args[5])){
+opt_parser<-OptionParser(option_list = option_list)
+opt<-parse_args(opt_parser)
+
+path_in<-opt$path_in
+path_out<-opt$path_out
+num_seq<-opt$num_seq
+json_palette_file<-opt$json_palette_file
+retrieve_seed<-opt$retrieve_seed
+
+if(retrieve_seed){
   seed_selected<- as.numeric(read.table(paste(path_in,"/seed_seq.txt",sep="")))
 }else{
   runif(1)
@@ -24,12 +59,10 @@ load(paste(path_in,"/Parameters.RData",sep=""))
 load(paste(path_in,"mut_names_tbl.RData",sep="/"))
 
 
-json_palette_file<-args[4]
 json_palette<-fromJSON(file=json_palette_file)
 palette<-sapply(json_palette,function(el){el$color})
 names(palette)<-sapply(json_palette,function(el){el$label})
 
-num_seq<-as.numeric(args[2])
 Nexp<-1
 
 load(paste(path_in,"/sim",Nexp,"/Zprovv",num_seq,".RData",sep=""))

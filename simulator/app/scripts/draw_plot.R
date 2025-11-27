@@ -4,13 +4,33 @@ source("scripts/Population.R")
 source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 
-args<-commandArgs(trailingOnly = TRUE)
-if(interactive()){
-  args <- c("raw","raw/label_color.json","output")
-}
-path_in<-args[1]
-path_out<-args[3]
-json_palette_file<-args[2]
+option_list<-list(
+  make_option(
+    c("--path_in"),
+    type="character",
+    default = "raw",
+    help = "path to the folder in which the get_obs_tum.R output is stored"
+  ),
+  make_option(
+    c("--json_palette_file"),
+    type="character",
+    default = "raw/label_color.json",
+    help = "json file with colors for populations (path)"
+  ),
+  make_option(
+    c("--path_out"),
+    type="character",
+    default = "output",
+    help = "path to the folder in which the plots and tibbles are going to be saved"
+  )
+)
+
+opt_parser<-OptionParser(option_list = option_list)
+opt<-parse_args(opt_parser)
+
+path_in<-opt$path_in
+path_out<-opt$path_out
+json_palette_file<-opt$json_palette_file
 
 load(paste(path_in,"/obs_tumor.RData",sep=""))
 load(paste(path_in,"/Parameters.RData",sep=""))

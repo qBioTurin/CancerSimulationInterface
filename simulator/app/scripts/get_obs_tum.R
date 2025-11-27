@@ -4,12 +4,26 @@ source("scripts/Population.R")
 source("scripts/Local_Params.R")
 source("scripts/Population_with_size_nmut.R")
 
-args<-commandArgs(trailingOnly = TRUE)
-if(interactive()){
-  args <- c("raw",4)
-}
-path<-args[1]
-depth<-10^{-as.numeric(args[2])}
+option_list<-list(
+  make_option(
+    c("--path"),
+    type="character",
+    default = "raw",
+    help = "path to the folder in which the simulation outputs (Zprovv*.RData) is stored"
+  ),
+  make_option(
+    c("--depth"),
+    type="numeric",
+    default = 3,
+    help = "only clones reaching at least 1/10^depth within their lifetime prevalence are retrieved"
+  )
+)
+
+opt_parser<-OptionParser(option_list = option_list)
+opt<-parse_args(opt_parser)
+
+path <- opt$path
+depth<-10^{-as.numeric(opt$depth)}
 
 load(paste(path,"/Parameters.RData",sep=""))
 Nexp<-1
