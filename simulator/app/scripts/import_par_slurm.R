@@ -83,9 +83,14 @@ binary_mat <- number2binary(1:L,I)
 
 mu<-rep(mut_rate_base*length_panel,L)
 if(length(m)>0){
-  mu<-matrix(binary_mat[,functional_effects=="mutation"]*rep(m,each=L),ncol=length(m))
-  mu[mu==0]<-1
-  mu<-rowProds(mu)*mut_rate_base*length_panel
+  if(sum(functional_effects=="mutation")==1){
+    v<-binary_mat[,functional_effects=="mutation"]
+    mu[v==1]<-mu[v==1]*m
+  }else{
+    mu<-apply(binary_mat[,functional_effects=="mutation"],
+              function(v){prod(m[v==1])},MARGIN=1)*mut_rate_base*length_panel
+  }
+  
 }
 
 influence<-matrix(1,I,I)

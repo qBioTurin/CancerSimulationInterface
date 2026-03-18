@@ -1,5 +1,4 @@
-
-<img width="1703" height="380" alt="Opera_senza_titolo 2" src="https://github.com/user-attachments/assets/9ff1212f-aed2-4611-929e-6b40f45b791e" />
+<img src="https://github.com/user-attachments/assets/9ff1212f-aed2-4611-929e-6b40f45b791e" alt="Opera_senza_titolo 2" width="1703" height="380"/>
 
 # In Silico Tumor Evolution
 
@@ -52,6 +51,7 @@ Windows
 ``` bash
  docker-compose up --build
 ```
+
 Then, copy the local-host link and paste it into your browser.
 
 ## Support
