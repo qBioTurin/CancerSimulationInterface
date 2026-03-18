@@ -52,7 +52,7 @@ def get_obs_tum():
     depth = request.args.get("depth")
     try:
         subprocess.run(
-            ["Rscript", "/app/scripts/get_obs_tum.R", "/data", depth],
+            ["Rscript", "/app/scripts/get_obs_tum.R", "--path", "/data", "--depth", depth],
             capture_output=True,
             text=True
         )
@@ -78,7 +78,7 @@ def draw_plot():
             json.dump(param, f, indent=4)
 
         subprocess.run(
-            ["Rscript", "/app/scripts/draw_plot.R", "/data",  "/data/labeled_colors.json", "/data"],
+            ["Rscript", "/app/scripts/draw_plot.R", "--path_in", "/data", "--json_palette_file",  "/data/labeled_colors.json", "--path_out", "/data"],
             capture_output=True,
             text=True
         )
@@ -158,7 +158,7 @@ def get_sequencing():
     numSeq = request.args.get("numSeq")
     try:
         subprocess.run(
-            ["Rscript", "/app/scripts/get_sequencing_wholemass.R", "/data", numSeq, "/data"],
+            ["Rscript", "/app/scripts/get_sequencing_wholemass.R", "--path_in", "/data", "--num_seq", numSeq, "--path_out", "/data"],
             capture_output=True,
             text=True
         )
@@ -184,7 +184,7 @@ def get_sequencing_subsample():
     try:
         if(first != 'false'):
            subprocess.run(
-            ["Rscript", "/app/scripts/get_sequencing_subsample.R", "/data", numSeq, "/data"],
+            ["Rscript", "/app/scripts/get_sequencing_subsample.R", "--path_in", "/data", "--num_seq", numSeq, "--path_out", "/data"],
             capture_output=True,
             text=True
            )
@@ -192,7 +192,7 @@ def get_sequencing_subsample():
         color = 'TRUE' if color == 'true' else "FALSE"
         
         subprocess.run(
-            ["Rscript", "/app/scripts/redo_get_sequencing_subsample.R", "/data", numSeq, "/data", "/data/labeled_colors.json", color],
+            ["Rscript", "/app/scripts/redo_get_sequencing_subsample.R", "--path_in", "/data", "--num_seq", numSeq, "--path_out", "/data", "--json_palette_file", "/data/labeled_colors.json", "--retrieve_seed", color],
             capture_output=True,
             text=True
         )
